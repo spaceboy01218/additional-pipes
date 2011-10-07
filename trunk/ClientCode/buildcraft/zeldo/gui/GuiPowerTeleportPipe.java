@@ -3,7 +3,6 @@ package net.minecraft.src.buildcraft.zeldo.gui;
 import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
-import net.minecraft.src.buildcraft.zeldo.pipes.PipeLiquidsTeleport;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipePowerTeleport;
 
 import org.lwjgl.opengl.GL11;

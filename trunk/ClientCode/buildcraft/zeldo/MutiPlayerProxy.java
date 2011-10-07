@@ -11,11 +11,13 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import net.minecraft.src.IInventory;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.mod_AdditionalPipes;
 import net.minecraft.src.mod_AdditionalPipes.chunkXZ;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
+import net.minecraft.src.buildcraft.zeldo.gui.GuiAdvancedWoodPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiItemTeleportPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiLiquidTeleportPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiPowerTeleportPipe;
@@ -38,6 +40,11 @@ public class MutiPlayerProxy {
 			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiPowerTeleportPipe(tilePipe));
 		}
 	}
+	public static void displayGUIAdvancedWood(IInventory PlayerInv, TileGenericPipe container) {
+		if (!APIProxy.isClient(APIProxy.getWorld())) {
+			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiAdvancedWoodPipe(PlayerInv, container));
+		}
+	}
 	public static boolean isOnServer()
 	{
 		return false;
@@ -48,7 +55,7 @@ public class MutiPlayerProxy {
 		MutiPlayerProxy.LoadChunkData();
 		x = x >> 4;
 		z = z >> 4;
-		Iterator chunks = mod_AdditionalPipes.keepLoadedChunks.iterator();
+		Iterator<chunkXZ> chunks = mod_AdditionalPipes.keepLoadedChunks.iterator();
 		while (chunks.hasNext()) {
 			chunkXZ curChunk = (chunkXZ)chunks.next();
 			if (curChunk.x == x && curChunk.z == z) {
@@ -90,7 +97,6 @@ public class MutiPlayerProxy {
 		        in.close();
 		        mod_AdditionalPipes.keepLoadedChunks = loaded;
 		        System.out.println("Loaded " + loaded.size() + " Forced Chunks");
-		        //return gelezen_veld;
 		      }
 		      catch (Exception e) {
 		          e.printStackTrace();
@@ -102,7 +108,7 @@ public class MutiPlayerProxy {
 		MutiPlayerProxy.LoadChunkData();
 		x = x >> 4;
 		z = z >> 4;
-		Iterator chunks = mod_AdditionalPipes.keepLoadedChunks.iterator();
+		Iterator<chunkXZ> chunks = mod_AdditionalPipes.keepLoadedChunks.iterator();
 		while (chunks.hasNext()) {
 			chunkXZ curChunk = (chunkXZ)chunks.next();
 			if (curChunk.x == x && curChunk.z == z) {
@@ -120,4 +126,5 @@ public class MutiPlayerProxy {
 			WorldDir = mod_AdditionalPipes.getSaveDirectory();
 		return new File(WorldDir, "ChunkLoader.doNotTouch");
 	}
+	
 }
