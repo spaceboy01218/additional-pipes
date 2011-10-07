@@ -13,6 +13,7 @@ import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemTeleport;
+import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsAdvancedWood;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsDistributor;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeLiquidsTeleport;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipePowerTeleport;
@@ -23,6 +24,7 @@ import net.minecraft.src.forge.Property;
 
 
 public class mod_AdditionalPipes extends BaseModMp {
+	@SuppressWarnings("serial")
 	public static class chunkXZ implements Serializable
 	{
 		public int x;
@@ -34,28 +36,42 @@ public class mod_AdditionalPipes extends BaseModMp {
 			z = az;
 		}
 	}
-	//public static BlockItemTransporter itemTransporter;
-	//public static BlockTeleportPipe teleportPipe;
-	//public static BlockOilTeleportPipe oilTeleportPipe;
+
+	//Item Teleport
 	public static Item pipeItemTeleport;
-	public static Item pipeLiquidTeleport;
-	public static Item pipePowerTeleport;
-	public static Item pipeDistributor;
 	public static int DEFUALT_ITEM_TELEPORT_ID = 4047;
-	public static int DEFUALT_LIQUID_TELEPORT_ID = 4048;
-	public static int DEFUALT_POWER_TELEPORT_ID = 4049;
-	public static int DEFUALT_DISTRIBUTOR_TELEPORT_ID = 4046;
 	public static int DEFUALT_ITEM_TELEPORT_TEXTURE = 8 * 16 + 0;
 	public static String DEFUALT_ITEM_TELEPORT_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/BlueItem.png";
+	
+	//Liquid Teleport
+	public static Item pipeLiquidTeleport;
+	public static int DEFUALT_LIQUID_TELEPORT_ID = 4048;
 	public static int DEFUALT_LIQUID_TELEPORT_TEXTURE = 8 * 16 + 2;
 	public static String DEFUALT_LIQUID_TELEPORT_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/BlueLiquid.png";
+	
+	//Power Teleport
+	public static Item pipePowerTeleport;
+	public static int DEFUALT_POWER_TELEPORT_ID = 4049;
 	public static int DEFUALT_POWER_TELEPORT_TEXTURE = 8 * 16 + 3;
 	public static String DEFUALT_POWER_TELEPORT_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/BluePower.png";
+	
+	//Distributor
+	public static Item pipeDistributor;
+	public static int DEFUALT_DISTRIBUTOR_TELEPORT_ID = 4046;
 	public static int DEFUALT_DISTRIBUTOR_TEXTURE = 8*16+4;
 	public static int DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED = 8*16+5;
 	public static String DEFUALT_DISTRIBUTOR_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/DistributionOpen.png";
 	public static String DEFUALT_DISTRIBUTOR_TEXTURE_FILE_CLOSED = "/net/minecraft/src/buildcraft/zeldo/gui/DistributionClosed.png";
-	public static int pipeTextureColor = 0;
+	
+	//Advanced Wood
+	public static Item pipeWoodName;
+	public static int DEFUALT_ADVANCEDWOOD_ID = 4045;
+	public static int DEFUALT_ADVANCEDWOOD_TEXTURE = 8*16+6;
+	public static int DEFUALT_ADVANCEDWOOD_TEXTURE_CLOSED = 8*16+7;
+	public static String DEFUALT_ADVANCEDWOOD_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/AdvancedWood.png";
+	public static String DEFUALT_ADVANCEDWOOD_FILE_CLOSED = "/net/minecraft/src/buildcraft/zeldo/gui/AdvancedWoodClosed.png";
+	
+	
 	private static Configuration config;
 	public int mpOilGuiId = -113;
 	public int mpItemGuiId = -114;
@@ -80,7 +96,7 @@ public class mod_AdditionalPipes extends BaseModMp {
 			if (lagFix) {
 				minecraft.theWorld.autosavePeriod = 6000;
 			}
-			Iterator chunks = keepLoadedChunks.iterator();
+			Iterator<chunkXZ> chunks = keepLoadedChunks.iterator();
 			while (chunks.hasNext()) {
 				chunkXZ curChunk = (chunkXZ)chunks.next();
 				if (minecraft.theWorld.chunkProvider.chunkExists(curChunk.x,curChunk.z)) {
@@ -129,7 +145,6 @@ public class mod_AdditionalPipes extends BaseModMp {
 		config = new Configuration(new File(CoreProxy.getBuildCraftBase(), "config/teleportpipe.cfg"));
 		config.load();
 		
-		pipeTextureColor = Integer.parseInt(config.getOrCreateBlockIdProperty("pipeTextureColor", 0).value);
 		lagFix = Boolean.parseBoolean(config.getOrCreateBooleanProperty("saveLagFix", Configuration.GENERAL_PROPERTY, false).value);
 		config.save();
 		
@@ -143,11 +158,13 @@ public class mod_AdditionalPipes extends BaseModMp {
 		pipeItemTeleport = createPipe (mod_AdditionalPipes.DEFUALT_ITEM_TELEPORT_ID, PipeItemTeleport.class, "Item Teleport Pipe", BuildCraftCore.diamondGearItem, Block.glass, BuildCraftCore.diamondGearItem, null);
 		pipeLiquidTeleport = createPipe (mod_AdditionalPipes.DEFUALT_LIQUID_TELEPORT_ID, PipeLiquidsTeleport.class, "Waterproof Teleport Pipe", BuildCraftTransport.pipeWaterproof, pipeItemTeleport, null, null);
 		pipePowerTeleport = createPipe (mod_AdditionalPipes.DEFUALT_POWER_TELEPORT_ID, PipePowerTeleport.class, "Power Teleport Pipe", Item.redstone, pipeItemTeleport, null, null);
-		pipeDistributor = createPipe(mod_AdditionalPipes.DEFUALT_DISTRIBUTOR_TELEPORT_ID, PipeItemsDistributor.class, "Item Distribution Pipe", Item.redstone, Item.ingotIron, Block.glass, Item.ingotIron);
+		pipeDistributor = createPipe(mod_AdditionalPipes.DEFUALT_DISTRIBUTOR_TELEPORT_ID, PipeItemsDistributor.class, "Distribution Transport Pipe", Item.redstone, Item.ingotIron, Block.glass, Item.ingotIron);
+		pipeWoodName = createPipe(mod_AdditionalPipes.DEFUALT_ADVANCEDWOOD_ID, PipeItemsAdvancedWood.class, "Advanced Wood Transport Pipe", Item.redstone, Block.planks, Block.glass, Block.planks);
 		MinecraftForgeClient.registerCustomItemRenderer(pipeItemTeleport.shiftedIndex, mod_BuildCraftTransport.instance);
 		MinecraftForgeClient.registerCustomItemRenderer(pipeLiquidTeleport.shiftedIndex, mod_BuildCraftTransport.instance);
 		MinecraftForgeClient.registerCustomItemRenderer(pipePowerTeleport.shiftedIndex, mod_BuildCraftTransport.instance);
 		MinecraftForgeClient.registerCustomItemRenderer(pipeDistributor.shiftedIndex, mod_BuildCraftTransport.instance);
+		
 		
 		
 	}
@@ -160,19 +177,16 @@ public class mod_AdditionalPipes extends BaseModMp {
 //
 //            return null;
 //    }
+	@SuppressWarnings("rawtypes")
 	public void AddImageOverride()
 	{
 		try {
 			HashMap textures = new HashMap();
-			try {
-				textures = (HashMap) ModLoader.getPrivateValue(RenderEngine.class, ModLoader.getMinecraftInstance().renderEngine, 1);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			textures = (HashMap) ModLoader.getPrivateValue(RenderEngine.class, ModLoader.getMinecraftInstance().renderEngine, 1);
 			int i = (Integer) textures.get(BuildCraftCore.customBuildCraftTexture);
 			ModTextureStatic modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_ITEM_TELEPORT_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_ITEM_TELEPORT_TEXTURE_FILE));
-            ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
-             modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_LIQUID_TELEPORT_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_LIQUID_TELEPORT_TEXTURE_FILE));
+			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
+			modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_LIQUID_TELEPORT_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_LIQUID_TELEPORT_TEXTURE_FILE));
             ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
             modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_POWER_TELEPORT_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_POWER_TELEPORT_TEXTURE_FILE));
             ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
@@ -180,6 +194,11 @@ public class mod_AdditionalPipes extends BaseModMp {
             ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
             modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_FILE_CLOSED));
             ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
+            modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_ADVANCEDWOOD_TEXTURE_CLOSED, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_ADVANCEDWOOD_FILE_CLOSED));
+            ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
+            modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_ADVANCEDWOOD_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_ADVANCEDWOOD_FILE));
+            ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
+            
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -187,7 +206,7 @@ public class mod_AdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "1.1";
+		return "1.2";
 	}
 //	public void HandlePacket(Packet230ModLoader packet) {
 //		//System.out.print("PacketID: " + packet.packetType+"\n");
