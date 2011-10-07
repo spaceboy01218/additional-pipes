@@ -12,7 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.mod_TeleportPipe;
+import net.minecraft.src.mod_AdditionalPipes;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.core.ILiquidContainer;
@@ -22,7 +22,7 @@ import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeTransportLiquids;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
-import net.minecraft.src.buildcraft.zeldo.PipeLogicLiquidTeleport;
+import net.minecraft.src.buildcraft.zeldo.logic.PipeLogicLiquidTeleport;
 
 public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHook {
 	
@@ -49,7 +49,7 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 
 	@Override
 	public int getBlockTexture() {
-		return mod_TeleportPipe.DEFUALT_LIQUID_TELEPORT_TEXTURE;
+		return mod_AdditionalPipes.DEFUALT_LIQUID_TELEPORT_TEXTURE;
 	}
 	
 	public void removeOldPipes()

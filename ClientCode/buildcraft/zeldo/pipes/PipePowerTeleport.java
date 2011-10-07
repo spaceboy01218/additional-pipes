@@ -13,7 +13,7 @@ import java.util.List;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.mod_TeleportPipe;
+import net.minecraft.src.mod_AdditionalPipes;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
@@ -23,7 +23,7 @@ import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeTransportPower;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
-import net.minecraft.src.buildcraft.zeldo.PipeLogicPowerTeleport;
+import net.minecraft.src.buildcraft.zeldo.logic.PipeLogicPowerTeleport;
 
 public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 	public class PowerReturn
@@ -49,7 +49,7 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 	}
 
 	public int getBlockTexture() {
-		return mod_TeleportPipe.DEFUALT_POWER_TELEPORT_TEXTURE;
+		return mod_AdditionalPipes.DEFUALT_POWER_TELEPORT_TEXTURE;
 	}
 	
 	public double calculateLoss(int distance, double power)

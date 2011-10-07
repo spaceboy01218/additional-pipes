@@ -6,7 +6,7 @@
  * granted by the copyright holder.
  */
 
-package net.minecraft.src.buildcraft.zeldo;
+package net.minecraft.src.buildcraft.zeldo.logic;
 
 import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;

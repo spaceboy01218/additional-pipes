@@ -1,24 +1,25 @@
-package net.minecraft.src.buildcraft.zeldo;
+package net.minecraft.src.buildcraft.zeldo.gui;
 
 import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
-import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemTeleport;
+import net.minecraft.src.buildcraft.zeldo.pipes.PipeLiquidsTeleport;
+import net.minecraft.src.buildcraft.zeldo.pipes.PipePowerTeleport;
 
 import org.lwjgl.opengl.GL11;
 
-public class GuiItemTeleportPipe extends GuiContainer {
+public class GuiPowerTeleportPipe extends GuiContainer {
 	
 	protected int xSize;
 	protected int ySize;
-	private PipeItemTeleport actualPipe;
+	private PipePowerTeleport actualPipe;
 	private GuiButton[] buttons = new GuiButton[7];
 	public int guiX = 0;
 	public int guiY = 0;
 	
-	public GuiItemTeleportPipe(TileGenericPipe thisPipe) {
+	public GuiPowerTeleportPipe(TileGenericPipe thisPipe) {
 		super(new ContainerTeleportPipe());
-		actualPipe = (PipeItemTeleport)thisPipe.pipe;
+		actualPipe = (PipePowerTeleport)thisPipe.pipe;
 		xSize = 228;
 		ySize = 117;
 	}
@@ -81,7 +82,7 @@ public class GuiItemTeleportPipe extends GuiContainer {
     	}
     	if (actualPipe.myFreq < 0)
     		actualPipe.myFreq = 0;
-    	//ModLoaderMp.SendPacket(mod_TeleportPipe.instance, actualPipe.getFreqPipe());
+    	//ModLoaderMp.SendPacket(mod_AdditionalPipes.instance, actualPipe.getFreqPipe());
     }
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float arg0) {}
