@@ -1,4 +1,4 @@
-package net.minecraft.src.buildcraft.zeldo;
+package net.minecraft.src.buildcraft.zeldo.gui;
 
 import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;

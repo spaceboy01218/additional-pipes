@@ -10,7 +10,7 @@ package net.minecraft.src.buildcraft.zeldo.pipes;
 
 import java.util.LinkedList;
 
-import net.minecraft.src.mod_TeleportPipe;
+import net.minecraft.src.mod_AdditionalPipes;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
@@ -18,12 +18,12 @@ import net.minecraft.src.buildcraft.transport.IPipeTransportItemsHook;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicIron;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
-import net.minecraft.src.buildcraft.zeldo.PipeLogicDistributor;
+import net.minecraft.src.buildcraft.zeldo.logic.PipeLogicDistributor;
 
 public class PipeItemsDistributor extends Pipe implements IPipeTransportItemsHook {
 	
-	private int baseTexture = mod_TeleportPipe.DEFUALT_DISTRIBUTOR_TEXTURE;
-	private int plainTexture = mod_TeleportPipe.DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED;
+	private int baseTexture = mod_AdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE;
+	private int plainTexture = mod_AdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED;
 	private int nextTexture = baseTexture;
 
 	public PipeItemsDistributor(int itemID) {

@@ -15,7 +15,7 @@ import java.util.Random;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.mod_TeleportPipe;
+import net.minecraft.src.mod_AdditionalPipes;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
@@ -28,7 +28,7 @@ import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
-import net.minecraft.src.buildcraft.zeldo.PipeLogicItemTeleport;
+import net.minecraft.src.buildcraft.zeldo.logic.PipeLogicItemTeleport;
 
 public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 
@@ -47,7 +47,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 	}
 
 	public int getBlockTexture() {
-		return mod_TeleportPipe.DEFUALT_ITEM_TELEPORT_TEXTURE;
+		return mod_AdditionalPipes.DEFUALT_ITEM_TELEPORT_TEXTURE;
 	}
 	
 	public void removeOldPipes()

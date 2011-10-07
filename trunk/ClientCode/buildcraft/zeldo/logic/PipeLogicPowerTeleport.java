@@ -5,7 +5,7 @@
  * or its modifications in any form, binary or source, except if expressively
  * granted by the copyright holder.
  */
-package net.minecraft.src.buildcraft.zeldo;
+package net.minecraft.src.buildcraft.zeldo.logic;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.BuildCraftTransport;
@@ -16,8 +16,9 @@ import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogic;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
+import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
 
-public class PipeLogicItemTeleport extends PipeLogic {
+public class PipeLogicPowerTeleport extends PipeLogic {
 	
 	@Override
 	public boolean blockActivated(EntityPlayer entityplayer) {		
@@ -29,7 +30,7 @@ public class PipeLogicItemTeleport extends PipeLogic {
 			}
 		}
 		
-		MutiPlayerProxy.displayGUIItemTeleport(this.container);
+		MutiPlayerProxy.displayGUIPowerTeleport(this.container);
 		
 		return true;		
 	}	
@@ -43,7 +44,7 @@ public class PipeLogicItemTeleport extends PipeLogic {
 		if (BuildCraftTransport.alwaysConnectPipes) {
 			return super.isPipeConnected(tile);
 		} else {
-			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicItemTeleport))
+			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicPowerTeleport))
 					&& super.isPipeConnected(tile);
 		}
 	}

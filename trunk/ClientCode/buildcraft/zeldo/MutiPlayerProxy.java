@@ -12,10 +12,13 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.mod_TeleportPipe;
-import net.minecraft.src.mod_TeleportPipe.chunkXZ;
+import net.minecraft.src.mod_AdditionalPipes;
+import net.minecraft.src.mod_AdditionalPipes.chunkXZ;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
+import net.minecraft.src.buildcraft.zeldo.gui.GuiItemTeleportPipe;
+import net.minecraft.src.buildcraft.zeldo.gui.GuiLiquidTeleportPipe;
+import net.minecraft.src.buildcraft.zeldo.gui.GuiPowerTeleportPipe;
 
 public class MutiPlayerProxy {
 	public static boolean NeedsLoad = true;
@@ -45,7 +48,7 @@ public class MutiPlayerProxy {
 		MutiPlayerProxy.LoadChunkData();
 		x = x >> 4;
 		z = z >> 4;
-		Iterator chunks = mod_TeleportPipe.keepLoadedChunks.iterator();
+		Iterator chunks = mod_AdditionalPipes.keepLoadedChunks.iterator();
 		while (chunks.hasNext()) {
 			chunkXZ curChunk = (chunkXZ)chunks.next();
 			if (curChunk.x == x && curChunk.z == z) {
@@ -54,7 +57,7 @@ public class MutiPlayerProxy {
 			}
 				
 		}
-		 mod_TeleportPipe.keepLoadedChunks.add(new mod_TeleportPipe.chunkXZ(x, z));
+		mod_AdditionalPipes.keepLoadedChunks.add(new mod_AdditionalPipes.chunkXZ(x, z));
 		 //System.out.println("Added PermChunk @ " + x + "," + z);
 		 SaveChunkData();
 	}
@@ -65,7 +68,7 @@ public class MutiPlayerProxy {
 	        FileOutputStream fos = new FileOutputStream(getChunkSaveFile().getAbsolutePath());
 	        GZIPOutputStream gzos = new GZIPOutputStream(fos);
 	        ObjectOutputStream out = new ObjectOutputStream(gzos);
-	        out.writeObject(mod_TeleportPipe.keepLoadedChunks);
+	        out.writeObject(mod_AdditionalPipes.keepLoadedChunks);
 	        out.flush();
 	        out.close();
 	        //System.out.println("Saved ChunkLoader data...");
@@ -74,6 +77,7 @@ public class MutiPlayerProxy {
 	    	 e.printStackTrace(); 
 	     }
 	}
+	@SuppressWarnings("unchecked")
 	public static void LoadChunkData() {
 		if (!NeedsLoad)
 			return;
@@ -82,9 +86,9 @@ public class MutiPlayerProxy {
 		        FileInputStream fis = new FileInputStream(getChunkSaveFile().getAbsolutePath());
 		        GZIPInputStream gzis = new GZIPInputStream(fis);
 		        ObjectInputStream in = new ObjectInputStream(gzis);
-		        List<mod_TeleportPipe.chunkXZ> loaded = (List<mod_TeleportPipe.chunkXZ>)in.readObject();
+		        List<mod_AdditionalPipes.chunkXZ> loaded = (List<mod_AdditionalPipes.chunkXZ>)in.readObject();
 		        in.close();
-		        mod_TeleportPipe.keepLoadedChunks = loaded;
+		        mod_AdditionalPipes.keepLoadedChunks = loaded;
 		        System.out.println("Loaded " + loaded.size() + " Forced Chunks");
 		        //return gelezen_veld;
 		      }
@@ -98,11 +102,11 @@ public class MutiPlayerProxy {
 		MutiPlayerProxy.LoadChunkData();
 		x = x >> 4;
 		z = z >> 4;
-		Iterator chunks = mod_TeleportPipe.keepLoadedChunks.iterator();
+		Iterator chunks = mod_AdditionalPipes.keepLoadedChunks.iterator();
 		while (chunks.hasNext()) {
 			chunkXZ curChunk = (chunkXZ)chunks.next();
 			if (curChunk.x == x && curChunk.z == z) {
-				mod_TeleportPipe.keepLoadedChunks.remove(curChunk);
+				mod_AdditionalPipes.keepLoadedChunks.remove(curChunk);
 				//System.out.println("Removed PermChunk @ " + x + "," + z);
 				SaveChunkData();
 				return;
@@ -113,7 +117,7 @@ public class MutiPlayerProxy {
 	public static File getChunkSaveFile() {
 		//With MC being dumb we have to load the world location ourselfs
 		if (WorldDir == null)
-			WorldDir = mod_TeleportPipe.getSaveDirectory();
+			WorldDir = mod_AdditionalPipes.getSaveDirectory();
 		return new File(WorldDir, "ChunkLoader.doNotTouch");
 	}
 }

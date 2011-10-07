@@ -1,4 +1,4 @@
-package net.minecraft.src.buildcraft.zeldo;
+package net.minecraft.src.buildcraft.zeldo.gui;
 
 import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiContainer;
@@ -81,7 +81,7 @@ public class GuiLiquidTeleportPipe extends GuiContainer {
     	}
     	if (actualPipe.myFreq < 0)
     		actualPipe.myFreq = 0;
-    	//ModLoaderMp.SendPacket(mod_TeleportPipe.instance, actualPipe.getFreqPipe());
+    	//ModLoaderMp.SendPacket(mod_AdditionalPipes.instance, actualPipe.getFreqPipe());
     }
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float arg0) {}
