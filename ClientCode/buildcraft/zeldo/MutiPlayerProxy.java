@@ -42,7 +42,7 @@ public class MutiPlayerProxy {
 	}
 	public static void displayGUIAdvancedWood(IInventory PlayerInv, TileGenericPipe container) {
 		if (!APIProxy.isClient(APIProxy.getWorld())) {
-			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiAdvancedWoodPipe(PlayerInv, container));
+			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiAdvancedWoodPipe(PlayerInv, container, container));
 		}
 	}
 	public static boolean isOnServer()

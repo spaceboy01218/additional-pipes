@@ -8,9 +8,11 @@
 
 package net.minecraft.src.buildcraft.zeldo.gui;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsAdvancedWood;
 
@@ -24,11 +26,12 @@ public class GuiAdvancedWoodPipe extends GuiContainer {
 	TileGenericPipe container;
 	private GuiButton[] buttons = new GuiButton[1];
 	
-	public GuiAdvancedWoodPipe(IInventory playerInventory, TileGenericPipe theContainer) {
-		super(new CraftingAdvancedWoodPipe(playerInventory, (IInventory)theContainer));
-		this.playerInventory = playerInventory;
-		this.filterInventory = (IInventory)theContainer;
-		container = theContainer;
+	public GuiAdvancedWoodPipe(IInventory playerInventorys, IInventory filterInventorys, TileGenericPipe container) {
+		super(new CraftingAdvancedWoodPipe(playerInventorys, filterInventorys));
+		this.playerInventory = playerInventorys;
+		this.filterInventory = filterInventorys;
+		this.container = container;
+		//container = theContainer;
 		xSize = 175;
 		ySize = 156;
 	
@@ -36,6 +39,7 @@ public class GuiAdvancedWoodPipe extends GuiContainer {
 	@SuppressWarnings("unchecked")
 	public void initGui()
 	{
+		super.initGui();
 		int guiX = (width - this.xSize) / 2;
         int guiY = (height - this.ySize) / 2;
 		controlList.add(this.buttons[0] =  new GuiButton(1, guiX + 8, guiY + 40, 140, 20, "These items are required"));
@@ -69,5 +73,5 @@ public class GuiAdvancedWoodPipe extends GuiContainer {
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
 	}
 
-	int inventoryRows = 6;
+	int inventoryRows = 1;
 }

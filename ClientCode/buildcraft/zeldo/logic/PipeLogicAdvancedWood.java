@@ -31,7 +31,7 @@ import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
 
 public class PipeLogicAdvancedWood extends PipeLogic {
 
-	 @TileNetworkData ItemStack [] items = new ItemStack [9];
+	ItemStack [] items = new ItemStack [9];
 	
 	public void switchSource () {		
 		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
