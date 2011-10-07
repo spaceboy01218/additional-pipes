@@ -45,7 +45,6 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 	public PipePowerTeleport(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicPowerTeleport(), itemID);
 		PowerTeleportPipes.add(this);
-		//((PipeTransportPower) transport).powerResitance = 0.0005;
 	}
 
 	public int getBlockTexture() {
@@ -54,10 +53,6 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 	
 	public double calculateLoss(int distance, double power)
 	{
-		//for (int i=0; i<distance; i++)
-		//{
-		//	power = power * PowerLoss;
-		//}
 		power = power * Math.pow(PowerLoss, distance);
 		return power;
 	}
