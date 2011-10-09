@@ -29,7 +29,7 @@ public class mod_AdditionalPipes extends BaseModMp {
 	{
 		public int x;
 		public int z;
-		
+
 		public chunkXZ(int ax, int az)
 		{
 			x = ax;
@@ -42,19 +42,19 @@ public class mod_AdditionalPipes extends BaseModMp {
 	public static int DEFUALT_ITEM_TELEPORT_ID = 4047;
 	public static int DEFUALT_ITEM_TELEPORT_TEXTURE = 8 * 16 + 0;
 	public static String DEFUALT_ITEM_TELEPORT_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/BlueItem.png";
-	
+
 	//Liquid Teleport
 	public static Item pipeLiquidTeleport;
 	public static int DEFUALT_LIQUID_TELEPORT_ID = 4048;
 	public static int DEFUALT_LIQUID_TELEPORT_TEXTURE = 8 * 16 + 2;
 	public static String DEFUALT_LIQUID_TELEPORT_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/BlueLiquid.png";
-	
+
 	//Power Teleport
 	public static Item pipePowerTeleport;
 	public static int DEFUALT_POWER_TELEPORT_ID = 4049;
 	public static int DEFUALT_POWER_TELEPORT_TEXTURE = 8 * 16 + 3;
 	public static String DEFUALT_POWER_TELEPORT_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/BluePower.png";
-	
+
 	//Distributor
 	public static Item pipeDistributor;
 	public static int DEFUALT_DISTRIBUTOR_TELEPORT_ID = 4046;
@@ -62,7 +62,7 @@ public class mod_AdditionalPipes extends BaseModMp {
 	public static int DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED = 8*16+5;
 	public static String DEFUALT_DISTRIBUTOR_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/DistributionOpen.png";
 	public static String DEFUALT_DISTRIBUTOR_TEXTURE_FILE_CLOSED = "/net/minecraft/src/buildcraft/zeldo/gui/DistributionClosed.png";
-	
+
 	//Advanced Wood
 	public static Item pipeAdvancedWood;
 	public static int DEFUALT_ADVANCEDWOOD_ID = 4045;
@@ -70,21 +70,39 @@ public class mod_AdditionalPipes extends BaseModMp {
 	public static int DEFUALT_ADVANCEDWOOD_TEXTURE_CLOSED = 8*16+7;
 	public static String DEFUALT_ADVANCEDWOOD_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/AdvancedWood.png";
 	public static String DEFUALT_ADVANCEDWOOD_FILE_CLOSED = "/net/minecraft/src/buildcraft/zeldo/gui/AdvancedWoodClosed.png";
+
+	//Advanced Insertion
+	public static Item pipeAdvancedInsertion;
+	public static int DEFUALT_Insertion_ID = 4044;
+	public static int DEFUALT_Insertion_TEXTURE = 8*16+6;
+	public static int DEFUALT_Insertion_TEXTURE_CLOSED = 8*16+7;
+	public static String DEFUALT_Insertion_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/AdvancedWood.png";
 	
+	//GUI Packet Ids
+	public static int GUI_ITEM_SEND = 255;
+	public static int GUI_LIQUID_SEND = 254;
+	public static int GUI_ENERGY_SEND = 253;
+	public static int GUI_ADVANCEDWOOD_SEND = 252;
+	public static int GUI_ITEM_REC = 244;
+	public static int GUI_LIQUID_REC = 244;
+	public static int GUI_ENERGY_REC = 244;
+	public static int GUI_ADVANCEDWOOD_REC = 244;
 	
+
+
 	private static Configuration config;
 	public int mpOilGuiId = -113;
 	public int mpItemGuiId = -114;
 	public static mod_AdditionalPipes instance;
 	public boolean isInGame = false;
 	public boolean lagFix = false;
-	
-	
+
+
 	//ChunkLoader Variables
 	public int chunkTestTime = 500;
 	public long lastCheckTime = 0;
 	public static List<chunkXZ> keepLoadedChunks = new ArrayList<chunkXZ>();
-	
+
 	public mod_AdditionalPipes() {
 		ModLoader.SetInGameHook(this, true, true);
 		ModLoader.SetInGUIHook(this, true, true);
@@ -121,7 +139,7 @@ public class mod_AdditionalPipes extends BaseModMp {
 		//System.out.print("World: " + (minecraft.theWorld == null) + "\n");
 		if (minecraft.theWorld == null)
 		{
-			
+
 			if (isInGame)
 			{
 				//System.out.print("Cleared TeleportPipes...\n");
@@ -139,22 +157,22 @@ public class mod_AdditionalPipes extends BaseModMp {
 	}
 	public static File getSaveDirectory() { return ((SaveHandler)ModLoader.getMinecraftInstance().theWorld.saveHandler).getSaveDirectory(); }
 	public void ModsLoaded () {	
-		
+
 		instance = this;
 
 		config = new Configuration(new File(CoreProxy.getBuildCraftBase(), "config/teleportpipe.cfg"));
 		config.load();
-		
+
 		lagFix = Boolean.parseBoolean(config.getOrCreateBooleanProperty("saveLagFix", Configuration.GENERAL_PROPERTY, false).value);
 		config.save();
-		
-		
+
+
 		//BuildCraftCore.customBuildCraftTexture = mod_AdditionalPipes.BUILDCRAFT_OVERRIDE_TEXTURE;
 		//MinecraftForgeClient.preloadTexture(BuildCraftCore.customBuildCraftTexture);
 		//ModLoader.addOverride(BuildCraftCore.customBuildCraftTexture, "/net/minecraft/src/zeldo/gui/pipe.png");
 		//MinecraftForgeClient.preloadTexture("/buildcraft/zeldo/gui/pipe.png");
 		AddImageOverride();
-		
+
 		pipeItemTeleport = createPipe (mod_AdditionalPipes.DEFUALT_ITEM_TELEPORT_ID, PipeItemTeleport.class, "Item Teleport Pipe", BuildCraftCore.diamondGearItem, Block.glass, BuildCraftCore.diamondGearItem, null);
 		pipeLiquidTeleport = createPipe (mod_AdditionalPipes.DEFUALT_LIQUID_TELEPORT_ID, PipeLiquidsTeleport.class, "Waterproof Teleport Pipe", BuildCraftTransport.pipeWaterproof, pipeItemTeleport, null, null);
 		pipePowerTeleport = createPipe (mod_AdditionalPipes.DEFUALT_POWER_TELEPORT_ID, PipePowerTeleport.class, "Power Teleport Pipe", Item.redstone, pipeItemTeleport, null, null);
@@ -165,19 +183,19 @@ public class mod_AdditionalPipes extends BaseModMp {
 		MinecraftForgeClient.registerCustomItemRenderer(pipePowerTeleport.shiftedIndex, mod_BuildCraftTransport.instance);
 		MinecraftForgeClient.registerCustomItemRenderer(pipeDistributor.shiftedIndex, mod_BuildCraftTransport.instance);
 		MinecraftForgeClient.registerCustomItemRenderer(pipeAdvancedWood.shiftedIndex, mod_BuildCraftTransport.instance);
-		
-		
-		
+
+
+
 	}
-//	public GuiScreen HandleGUI(int inventoryType) 
-//    {
-//            if(inventoryType == mpOilGuiId)
-//                    return new GuiOilTeleportPipe((TileOilTeleportPipe) ModLoader.getMinecraftInstance().theWorld.getBlockTileEntity(ModLoader.getMinecraftInstance().objectMouseOver.blockX, ModLoader.getMinecraftInstance().objectMouseOver.blockY, ModLoader.getMinecraftInstance().objectMouseOver.blockZ));
-//            else if (inventoryType == mpItemGuiId)
-//            	return new GuiTeleportPipe((TileTeleportPipe) ModLoader.getMinecraftInstance().theWorld.getBlockTileEntity(ModLoader.getMinecraftInstance().objectMouseOver.blockX, ModLoader.getMinecraftInstance().objectMouseOver.blockY, ModLoader.getMinecraftInstance().objectMouseOver.blockZ));;
-//
-//            return null;
-//    }
+	//	public GuiScreen HandleGUI(int inventoryType) 
+	//    {
+	//            if(inventoryType == mpOilGuiId)
+	//                    return new GuiOilTeleportPipe((TileOilTeleportPipe) ModLoader.getMinecraftInstance().theWorld.getBlockTileEntity(ModLoader.getMinecraftInstance().objectMouseOver.blockX, ModLoader.getMinecraftInstance().objectMouseOver.blockY, ModLoader.getMinecraftInstance().objectMouseOver.blockZ));
+	//            else if (inventoryType == mpItemGuiId)
+	//            	return new GuiTeleportPipe((TileTeleportPipe) ModLoader.getMinecraftInstance().theWorld.getBlockTileEntity(ModLoader.getMinecraftInstance().objectMouseOver.blockX, ModLoader.getMinecraftInstance().objectMouseOver.blockY, ModLoader.getMinecraftInstance().objectMouseOver.blockZ));;
+	//
+	//            return null;
+	//    }
 	@SuppressWarnings("rawtypes")
 	public void AddImageOverride()
 	{
@@ -188,18 +206,18 @@ public class mod_AdditionalPipes extends BaseModMp {
 			ModTextureStatic modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_ITEM_TELEPORT_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_ITEM_TELEPORT_TEXTURE_FILE));
 			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
 			modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_LIQUID_TELEPORT_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_LIQUID_TELEPORT_TEXTURE_FILE));
-            ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
-            modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_POWER_TELEPORT_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_POWER_TELEPORT_TEXTURE_FILE));
-            ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
-            modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_FILE));
-            ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
-            modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_FILE_CLOSED));
-            ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
-            modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_ADVANCEDWOOD_TEXTURE_CLOSED, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_ADVANCEDWOOD_FILE_CLOSED));
-            ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
-            modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_ADVANCEDWOOD_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_ADVANCEDWOOD_FILE));
-            ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
-            
+			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
+			modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_POWER_TELEPORT_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_POWER_TELEPORT_TEXTURE_FILE));
+			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
+			modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_FILE));
+			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
+			modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_FILE_CLOSED));
+			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
+			modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_ADVANCEDWOOD_TEXTURE_CLOSED, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_ADVANCEDWOOD_FILE_CLOSED));
+			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
+			modtexturestatic = new ModTextureStatic(mod_AdditionalPipes.DEFUALT_ADVANCEDWOOD_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_AdditionalPipes.DEFUALT_ADVANCEDWOOD_FILE));
+			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -209,81 +227,81 @@ public class mod_AdditionalPipes extends BaseModMp {
 	public String Version() {
 		return "1.2";
 	}
-//	public void HandlePacket(Packet230ModLoader packet) {
-//		//System.out.print("PacketID: " + packet.packetType+"\n");
-//		if (packet.packetType == 1) {	
-//			int x = packet.dataInt [0];
-//			int y = packet.dataInt [1];
-//			int z = packet.dataInt [2];
-//			if (APIProxy.getWorld().blockExists(x, y, z)) {
-//				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
-//				
-//				if (tile instanceof TileTeleportPipe) {
-//					int freq = packet.dataInt[3];
-//					//System.out.print("Owner: " +packet.dataString[0]+"\n");
-//					((TileTeleportPipe) tile).handleGuiPacket(x, y, z, freq, (packet.dataInt[4] == 1), packet.dataString[0]);
-//					return;
-//				}
-//			}
-//		}
-//		if (packet.packetType == 3) {	
-//			int x = packet.dataInt [0];
-//			int y = packet.dataInt [1];
-//			int z = packet.dataInt [2];
-//			if (APIProxy.getWorld().blockExists(x, y, z)) {
-//				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
-//				
-//				if (tile instanceof TileOilTeleportPipe) {
-//					int freq = packet.dataInt[3];
-//					((TileOilTeleportPipe) tile).handleGuiPacket(x, y, z, freq, (packet.dataInt[4] == 1), packet.dataString[0]);
-//					return;
-//				}
-//			}
-//		}
-//		if (packet.packetType == 2) {	//Delete Entity
-//			int x = packet.dataInt [0];
-//			int y = packet.dataInt [1];
-//			int z = packet.dataInt [2];
-//			if (APIProxy.getWorld().blockExists(x, y, z)) {
-//				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
-//				
-//				if (tile instanceof TileTeleportPipe) {
-//					((TileTeleportPipe) tile).travelingEntities.remove(packet.dataInt[3]);
-//					return;
-//				}
-//			}
-//		} 
-//		if (packet.packetType == 4) {	//Delete OilPipe
-//			int x = packet.dataInt [0];
-//			int y = packet.dataInt [1];
-//			int z = packet.dataInt [2];
-//			if (APIProxy.getWorld().blockExists(x, y, z)) {
-//				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
-//				
-//				if (tile instanceof TileOilTeleportPipe) {
-//					((TileOilTeleportPipe) tile).oilTeleportPipes.remove(packet.dataInt[3]);
-//					return;
-//				}
-//			}
-//		}
-//		if (packet.packetType == 5) {	//Delete Tele Pipe
-//			int x = packet.dataInt [0];
-//			int y = packet.dataInt [1];
-//			int z = packet.dataInt [2];
-//			if (APIProxy.getWorld().blockExists(x, y, z)) {
-//				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
-//				
-//				if (tile instanceof TileTeleportPipe) {
-//					((TileTeleportPipe) tile).teleportPipes.remove(packet.dataInt[3]);
-//					return;
-//				}
-//			}
-//		}
-//		if (packet.packetType == 10) {	//Delete Tele Pipe
-//			ModLoader.getMinecraftInstance().playerController.resetBlockRemoving();
-//		}
-//		
-//    }
+	//	public void HandlePacket(Packet230ModLoader packet) {
+	//		//System.out.print("PacketID: " + packet.packetType+"\n");
+	//		if (packet.packetType == 1) {	
+	//			int x = packet.dataInt [0];
+	//			int y = packet.dataInt [1];
+	//			int z = packet.dataInt [2];
+	//			if (APIProxy.getWorld().blockExists(x, y, z)) {
+	//				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+	//				
+	//				if (tile instanceof TileTeleportPipe) {
+	//					int freq = packet.dataInt[3];
+	//					//System.out.print("Owner: " +packet.dataString[0]+"\n");
+	//					((TileTeleportPipe) tile).handleGuiPacket(x, y, z, freq, (packet.dataInt[4] == 1), packet.dataString[0]);
+	//					return;
+	//				}
+	//			}
+	//		}
+	//		if (packet.packetType == 3) {	
+	//			int x = packet.dataInt [0];
+	//			int y = packet.dataInt [1];
+	//			int z = packet.dataInt [2];
+	//			if (APIProxy.getWorld().blockExists(x, y, z)) {
+	//				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+	//				
+	//				if (tile instanceof TileOilTeleportPipe) {
+	//					int freq = packet.dataInt[3];
+	//					((TileOilTeleportPipe) tile).handleGuiPacket(x, y, z, freq, (packet.dataInt[4] == 1), packet.dataString[0]);
+	//					return;
+	//				}
+	//			}
+	//		}
+	//		if (packet.packetType == 2) {	//Delete Entity
+	//			int x = packet.dataInt [0];
+	//			int y = packet.dataInt [1];
+	//			int z = packet.dataInt [2];
+	//			if (APIProxy.getWorld().blockExists(x, y, z)) {
+	//				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+	//				
+	//				if (tile instanceof TileTeleportPipe) {
+	//					((TileTeleportPipe) tile).travelingEntities.remove(packet.dataInt[3]);
+	//					return;
+	//				}
+	//			}
+	//		} 
+	//		if (packet.packetType == 4) {	//Delete OilPipe
+	//			int x = packet.dataInt [0];
+	//			int y = packet.dataInt [1];
+	//			int z = packet.dataInt [2];
+	//			if (APIProxy.getWorld().blockExists(x, y, z)) {
+	//				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+	//				
+	//				if (tile instanceof TileOilTeleportPipe) {
+	//					((TileOilTeleportPipe) tile).oilTeleportPipes.remove(packet.dataInt[3]);
+	//					return;
+	//				}
+	//			}
+	//		}
+	//		if (packet.packetType == 5) {	//Delete Tele Pipe
+	//			int x = packet.dataInt [0];
+	//			int y = packet.dataInt [1];
+	//			int z = packet.dataInt [2];
+	//			if (APIProxy.getWorld().blockExists(x, y, z)) {
+	//				TileEntity tile = APIProxy.getWorld().getBlockTileEntity(x, y, z);
+	//				
+	//				if (tile instanceof TileTeleportPipe) {
+	//					((TileTeleportPipe) tile).teleportPipes.remove(packet.dataInt[3]);
+	//					return;
+	//				}
+	//			}
+	//		}
+	//		if (packet.packetType == 10) {	//Delete Tele Pipe
+	//			ModLoader.getMinecraftInstance().playerController.resetBlockRemoving();
+	//		}
+	//		
+	//    }
 	public static int boolToInt(boolean a) {
 		if (a)
 			return 1;
@@ -292,18 +310,18 @@ public class mod_AdditionalPipes extends BaseModMp {
 	private static Item createPipe (int defaultID, Class <? extends Pipe> clas, String descr, Object r1, Object r2, Object r3, Object r4) {
 		String name = Character.toLowerCase(clas.getSimpleName().charAt(0))
 				+ clas.getSimpleName().substring(1);
-		
+
 		Property prop = config
 				.getOrCreateIntProperty(name + ".id",
 						Configuration.ITEM_PROPERTY, defaultID);
-		
+
 		int id = Integer.parseInt(prop.value);
 		Item res =  BlockGenericPipe.registerPipe (id, clas);
 		res.setItemName(clas.getSimpleName());
 		CoreProxy.addName(res, descr);
-		
+
 		CraftingManager craftingmanager = CraftingManager.getInstance();
-		
+
 		if (r1 != null && r2 != null && r3 != null && r4 != null) {						
 			craftingmanager.addRecipe(new ItemStack(res, 8), new Object[] {
 				" D ", "ABC", "   ", 
@@ -323,7 +341,7 @@ public class mod_AdditionalPipes extends BaseModMp {
 				Character.valueOf('A'), r1,
 				Character.valueOf('B'), r2});
 		}
-		
+
 		return res;
 	}
 }

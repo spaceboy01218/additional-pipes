@@ -25,6 +25,7 @@ import net.minecraft.src.buildcraft.zeldo.gui.GuiPowerTeleportPipe;
 public class MutiPlayerProxy {
 	public static boolean NeedsLoad = true;
 	public static File WorldDir;
+	public static boolean isServer = false;
 	public static void displayGUIItemTeleport(TileGenericPipe tilePipe) {
 		if (!APIProxy.isClient(APIProxy.getWorld())) {
 			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiItemTeleportPipe(tilePipe));
