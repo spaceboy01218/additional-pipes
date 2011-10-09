@@ -139,10 +139,10 @@ public class PipeItemsAdvancedWood extends Pipe implements IPowerReceptor {
 	 */
 	public ItemStack checkExtract(IInventory inventory, boolean doRemove,
 			Orientations from) {
-		if (inventory instanceof ISpecialInventory) {
-			//At the moment we are going to let special inventorys handle there own. Might change if popular demand
-			return ((ISpecialInventory) inventory).extractItem(doRemove, from);
-		}
+//		if (inventory instanceof ISpecialInventory) {
+//			//At the moment we are going to let special inventorys handle there own. Might change if popular demand
+//			return ((ISpecialInventory) inventory).extractItem(doRemove, from);
+//		}
 		IInventory inv = Utils.getInventory(inventory);
 		ItemStack result = checkExtractGeneric(inv, doRemove, from);
 		return result;
