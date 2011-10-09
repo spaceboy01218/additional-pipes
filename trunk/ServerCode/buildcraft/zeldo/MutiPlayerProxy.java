@@ -12,66 +12,47 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModLoaderMp;
 import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.mod_zAdditionalPipes;
 import net.minecraft.src.mod_zAdditionalPipes.chunkXZ;
-import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
-import net.minecraft.src.buildcraft.zeldo.gui.GuiAdvancedWoodPipe;
-import net.minecraft.src.buildcraft.zeldo.gui.GuiItemTeleportPipe;
-import net.minecraft.src.buildcraft.zeldo.gui.GuiLiquidTeleportPipe;
-import net.minecraft.src.buildcraft.zeldo.gui.GuiPowerTeleportPipe;
+import net.minecraft.src.buildcraft.zeldo.gui.ContainerTeleportPipe;
+import net.minecraft.src.buildcraft.zeldo.gui.CraftingAdvancedWoodPipe;
+import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemTeleport;
+import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsAdvancedWood;
+import net.minecraft.src.buildcraft.zeldo.pipes.PipeLiquidsTeleport;
+import net.minecraft.src.buildcraft.zeldo.pipes.PipePowerTeleport;
 
 public class MutiPlayerProxy {
 	public static boolean NeedsLoad = true;
 	public static File WorldDir;
-	public static boolean isServer = false;
+	public static boolean isServer = true;
 	public static void displayGUIItemTeleport(EntityPlayer entityplayer, TileGenericPipe tilePipe) {
-		if (!APIProxy.isClient(APIProxy.getWorld())) {
-			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiItemTeleportPipe(tilePipe));
-		}
+		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, ((PipeItemTeleport)tilePipe.pipe).getDescPipe());
+		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, mod_zAdditionalPipes.getCountPacket(((PipeItemTeleport)tilePipe.pipe).getConnectedPipes(true).size()));
+		ModLoader.OpenGUI(entityplayer, mod_zAdditionalPipes.GUI_ITEM_SEND, entityplayer.inventory, new ContainerTeleportPipe());
 	}
-	public static void displayGUILiquidTeleport(EntityPlayer entityplayer, TileGenericPipe tilePipe) {
-		if (!APIProxy.isClient(APIProxy.getWorld())) {
-			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiLiquidTeleportPipe(tilePipe));
-		}
+	public static void displayGUILiquidTeleport(EntityPlayer entityplayer,TileGenericPipe tilePipe) {
+		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, ((PipeLiquidsTeleport)tilePipe.pipe).getDescPipe());
+		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, mod_zAdditionalPipes.getCountPacket(((PipeLiquidsTeleport)tilePipe.pipe).getConnectedPipes(true).size()));
+		ModLoader.OpenGUI(entityplayer, mod_zAdditionalPipes.GUI_LIQUID_SEND, entityplayer.inventory, new ContainerTeleportPipe());
 	}
 	public static void displayGUIPowerTeleport(EntityPlayer entityplayer, TileGenericPipe tilePipe) {
-		if (!APIProxy.isClient(APIProxy.getWorld())) {
-			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiPowerTeleportPipe(tilePipe));
-		}
+		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, ((PipePowerTeleport)tilePipe.pipe).getDescPipe());
+		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, mod_zAdditionalPipes.getCountPacket(((PipePowerTeleport)tilePipe.pipe).getConnectedPipes(true).size()));
+		ModLoader.OpenGUI(entityplayer, mod_zAdditionalPipes.GUI_ENERGY_SEND, entityplayer.inventory, new ContainerTeleportPipe());
 	}
-	public static void displayGUIAdvancedWood(EntityPlayer entityplayer, TileGenericPipe container) {
-		if (!APIProxy.isClient(APIProxy.getWorld())) {
-			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiAdvancedWoodPipe(entityplayer.inventory, container, container));
-		}
+	public static void displayGUIAdvancedWood(EntityPlayer entityplayer, TileGenericPipe tilePipe) {
+		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, ((PipeItemsAdvancedWood)tilePipe.pipe).getDescPacket());
+		ModLoader.OpenGUI(entityplayer, mod_zAdditionalPipes.GUI_ADVANCEDWOOD_SEND, tilePipe, new CraftingAdvancedWoodPipe(entityplayer.inventory, tilePipe));
 	}
-	public static void requestItemTeleport(int x, int y, int z) {
-		if (APIProxy.isClient(APIProxy.getWorld())) {
-			System.out.println("Send Request for pipe");
-			ModLoaderMp.SendPacket(mod_zAdditionalPipes.instance, requestUpdatePacket( x, y, z, mod_zAdditionalPipes.PACKET_REQ_ITEM));
-		}
-	}
-	public static Packet230ModLoader requestUpdatePacket(int x, int y, int z, int PacketID) {
-		Packet230ModLoader packet = new Packet230ModLoader();
-
-		packet.modId = mod_zAdditionalPipes.instance.getId();
-		packet.packetType = PacketID;
-		packet.isChunkDataPacket = true;
-
-		packet.dataInt = new int [3];
-
-		packet.dataInt [0] = x;
-		packet.dataInt [1] = y;
-		packet.dataInt [2] = z;
-
-		return packet;
-	}
+	public static void requestItemTeleport(int x, int y, int z) {}
 	public static boolean isOnServer()
 	{
-		return ModLoader.getMinecraftInstance().theWorld.multiplayerWorld;
+		return true;
 	}
 	public static void AddChunkToList(int x, int z) {
 		if (isOnServer())
@@ -110,8 +91,6 @@ public class MutiPlayerProxy {
 	}
 	@SuppressWarnings("unchecked")
 	public static void LoadChunkData() {
-		if (isOnServer())
-			return;
 		if (!NeedsLoad)
 			return;
 		NeedsLoad = false;
@@ -152,5 +131,19 @@ public class MutiPlayerProxy {
 			WorldDir = mod_zAdditionalPipes.getSaveDirectory();
 		return new File(WorldDir, "ChunkLoader.doNotTouch");
 	}
-	
+	public static boolean isOp(String entityplayermp) {
+		if(ModLoader.getMinecraftServerInstance().configManager.isOp(entityplayermp))
+		{
+			return true;
+		}
+		return false;
+	}
+	public static void SendPacketToAll(Packet230ModLoader packet)
+	{
+		ModLoaderMp.SendPacketToAll(mod_zAdditionalPipes.instance, packet);
+	}
+	public static void SendPacket(Packet230ModLoader packet, EntityPlayer entityplayermp)
+	{
+		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayermp, packet);
+	}
 }

@@ -8,12 +8,13 @@
 
 package net.minecraft.src.buildcraft.zeldo.gui;
 
-import net.minecraft.src.Block;
 import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
+import net.minecraft.src.ModLoaderMp;
+import net.minecraft.src.mod_zAdditionalPipes;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
+import net.minecraft.src.buildcraft.zeldo.logic.PipeLogicAdvancedWood;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsAdvancedWood;
 
 import org.lwjgl.opengl.GL11;
@@ -47,7 +48,7 @@ public class GuiAdvancedWoodPipe extends GuiContainer {
 	
     protected void drawGuiContainerForegroundLayer()
     {
-    	if (((PipeItemsAdvancedWood)container.pipe).exclude) {
+    	if (((PipeLogicAdvancedWood)container.pipe.logic).exclude) {
     		this.buttons[0].displayString = "These items are excluded";
     	} else {
     		this.buttons[0].displayString = "These items are required";
@@ -58,8 +59,9 @@ public class GuiAdvancedWoodPipe extends GuiContainer {
     protected void actionPerformed(GuiButton guibutton) {
     	if (guibutton.id == 1)
     	{
-    		((PipeItemsAdvancedWood)container.pipe).exclude = !((PipeItemsAdvancedWood)container.pipe).exclude;
+    		((PipeLogicAdvancedWood)container.pipe.logic).exclude = !((PipeLogicAdvancedWood)container.pipe.logic).exclude;
     	}
+    	ModLoaderMp.SendPacket(mod_zAdditionalPipes.instance, ((PipeItemsAdvancedWood)container.pipe).getDescPacket());
     }
 	
 	@Override

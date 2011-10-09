@@ -2,7 +2,10 @@ package net.minecraft.src.buildcraft.zeldo.gui;
 
 import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiContainer;
+import net.minecraft.src.ModLoaderMp;
+import net.minecraft.src.mod_zAdditionalPipes;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
+import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeLiquidsTeleport;
 
 import org.lwjgl.opengl.GL11;
@@ -47,9 +50,13 @@ public class GuiLiquidTeleportPipe extends GuiContainer {
 		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
 		
 		fontRenderer.drawString("Frequency: " + actualPipe.myFreq, j + 8, k + 6, 0x404040);
-		fontRenderer.drawString("Connected Pipes: " + actualPipe.getConnectedPipes(true).size(), j + 100, k + 6, 0x404040);
+		if (MutiPlayerProxy.isOnServer()) {
+			fontRenderer.drawString("Connected Pipes: " + mod_zAdditionalPipes.CurrentGUICount, j + 100, k + 6, 0x404040);
+		} else {
+			fontRenderer.drawString("Connected Pipes: " + actualPipe.getConnectedPipes(true).size(), j + 100, k + 6, 0x404040);
+		}
 		fontRenderer.drawString("Can Receive: " + actualPipe.canReceive, j + 8, k + 42, 0x404040);
-		//fontRenderer.drawString("Owner: " + actualPipe.Owner, j + 8, k + 75, 0x404040);
+		fontRenderer.drawString("Owner: " + actualPipe.Owner, j + 8, k + 75, 0x404040);
 		
 		super.drawGuiContainerForegroundLayer();
         //fontRenderer.drawString(filterInventory.getInvName(), 8, 6, 0x404040);
@@ -81,7 +88,7 @@ public class GuiLiquidTeleportPipe extends GuiContainer {
     	}
     	if (actualPipe.myFreq < 0)
     		actualPipe.myFreq = 0;
-    	//ModLoaderMp.SendPacket(mod_AdditionalPipes.instance, actualPipe.getFreqPipe());
+    	ModLoaderMp.SendPacket(mod_zAdditionalPipes.instance, actualPipe.getDescPipe());
     }
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float arg0) {}
