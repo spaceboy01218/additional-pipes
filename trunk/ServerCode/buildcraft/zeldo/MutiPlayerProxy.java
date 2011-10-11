@@ -142,4 +142,7 @@ public class MutiPlayerProxy {
 	{
 		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayermp, packet);
 	}
+	public static void bindTex()
+	{
+	}
 }

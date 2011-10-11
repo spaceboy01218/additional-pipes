@@ -1,5 +1,5 @@
-/** 
- * BuildCraft is open-source. It is distributed under the terms of the 
+/**
+ * BuildCraft is open-source. It is distributed under the terms of the
  * BuildCraft Open Source License. It grants rights to read, modify, compile
  * or run the code. It does *NOT* grant the right to redistribute this software
  * or its modifications in any form, binary or source, except if expressively
@@ -32,7 +32,7 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 	{
 		public TileEntity tile;
 		public Orientations ori;
-		
+
 		public PowerReturn(TileEntity te, Orientations o)
 		{
 			tile = te; ori = o;
@@ -47,11 +47,12 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 		super(new PipeTransportPower(), new PipeLogicPowerTeleport(), itemID);
 		PowerTeleportPipes.add(this);
 	}
-
+	@Override
 	public int getBlockTexture() {
+		MutiPlayerProxy.bindTex();
 		return mod_zAdditionalPipes.DEFUALT_POWER_TELEPORT_TEXTURE;
 	}
-	
+
 	public double calculateLoss(int distance, double power)
 	{
 		power = power * Math.pow(PowerLoss, distance);
@@ -65,8 +66,8 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 		List<PipePowerTeleport> sendingToList = new LinkedList<PipePowerTeleport>();
 		if (pipeList.size() == 0)
 			return;
-		
-		for (int a=0; a<pipeList.size(); a++) 
+
+		for (int a=0; a<pipeList.size(); a++)
 		{
 			if (TeleportNeedsPower(pipeList.get(a)).size() > 0)
 				sendingToList.add(pipeList.get(a));
@@ -86,7 +87,7 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 			//System.out.println("needsPower: " + needsPower.size() + " - PowerToSend2: " + powerToSend2);
 			for (int b=0; b<needsPower.size(); b++)
 			{
-				if (needsPower.get(b).tile instanceof TileGenericPipe) {							
+				if (needsPower.get(b).tile instanceof TileGenericPipe) {
 					TileGenericPipe nearbyTile = (TileGenericPipe) needsPower.get(b).tile;
 					PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
 					nearbyTransport.receiveEnergy(needsPower.get(b).ori, powerToSend2);
@@ -95,41 +96,41 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 					pow.getPowerProvider().receiveEnergy((int)powerToSend2);
 				}
 			}
-			
+
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-//		//System.out.println("PipeList Size: " + pipeList.size());
-//		int i = worldObj.rand.nextInt(pipeList.size());
-//		LinkedList<Orientations> theList = getRealPossibleMovements(pipeList.get(i).getPosition());
-//		if (theList.size() <= 0)
-//			return;
-//
-//		Orientations newPos = theList.get(worldObj.rand.nextInt(theList.size()));
-//		Position destPos = new Position((int) pipeList.get(i).xCoord, pipeList.get(i).yCoord, pipeList.get(i).zCoord, newPos);
-//		destPos.moveForwards(1.0);
-//		
-//
-//		
-//
-//		TileEntity tile = worldObj.getBlockTileEntity((int)destPos.x, (int)destPos.y, (int)destPos.z);
-//		if (tile instanceof TileGenericPipe) {							
-//			TileGenericPipe nearbyTile = (TileGenericPipe) tile;
-//			PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
-//			nearbyTransport.receiveEnergy(newPos.reverse(), val);
-//		} else if (tile instanceof IPowerReceptor) {
-//			IPowerReceptor pow = (IPowerReceptor) tile;
-//			pow.getPowerProvider().receiveEnergy((int)val);
-//		}
-		
+
+
+
+
+
+
+
+
+
+
+		//		//System.out.println("PipeList Size: " + pipeList.size());
+		//		int i = worldObj.rand.nextInt(pipeList.size());
+		//		LinkedList<Orientations> theList = getRealPossibleMovements(pipeList.get(i).getPosition());
+		//		if (theList.size() <= 0)
+		//			return;
+		//
+		//		Orientations newPos = theList.get(worldObj.rand.nextInt(theList.size()));
+		//		Position destPos = new Position((int) pipeList.get(i).xCoord, pipeList.get(i).yCoord, pipeList.get(i).zCoord, newPos);
+		//		destPos.moveForwards(1.0);
+		//
+		//
+		//
+		//
+		//		TileEntity tile = worldObj.getBlockTileEntity((int)destPos.x, (int)destPos.y, (int)destPos.z);
+		//		if (tile instanceof TileGenericPipe) {
+		//			TileGenericPipe nearbyTile = (TileGenericPipe) tile;
+		//			PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
+		//			nearbyTransport.receiveEnergy(newPos.reverse(), val);
+		//		} else if (tile instanceof IPowerReceptor) {
+		//			IPowerReceptor pow = (IPowerReceptor) tile;
+		//			pow.getPowerProvider().receiveEnergy((int)val);
+		//		}
+
 	}
 	public List<PowerReturn> TeleportNeedsPower(PipePowerTeleport a)
 	{
@@ -140,7 +141,7 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 			for (int b=0; b<theList.size(); b++)
 			{
 				Orientations newPos = theList.get(b);
-				Position destPos = new Position((int) a.xCoord, a.yCoord, a.zCoord, newPos);
+				Position destPos = new Position(a.xCoord, a.yCoord, a.zCoord, newPos);
 				destPos.moveForwards(1.0);
 				TileEntity tile = worldObj.getBlockTileEntity((int)destPos.x, (int)destPos.y, (int)destPos.z);
 				if (TileNeedsPower(tile))
@@ -152,15 +153,15 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 	}
 	public boolean TileNeedsPower(TileEntity tile)
 	{
-		
-		if (tile instanceof TileGenericPipe) {							
+
+		if (tile instanceof TileGenericPipe) {
 			PipeTransportPower ttb = (PipeTransportPower) ((TileGenericPipe)tile).pipe.transport;
 			for (int i=0; i<ttb.powerQuery.length; i++)
 				if (ttb.powerQuery[i] > 0)
 					return true;
 		} else if (tile instanceof IPowerReceptor) {
 		}
-		
+
 		return false;
 	}
 	public List<PipePowerTeleport> getConnectedPipes(boolean ignoreReceive) {
@@ -220,6 +221,7 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 		}
 		PowerTeleportPipes.removeAll(toRemove);
 	}
+	@Override
 	public void setPosition (int xCoord, int yCoord, int zCoord) {
 		LinkedList <PipePowerTeleport> toRemove = new LinkedList <PipePowerTeleport> ();
 		for (int i=0; i< PowerTeleportPipes.size(); i++) {
@@ -231,6 +233,7 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 		PowerTeleportPipes.removeAll(toRemove);
 		super.setPosition(xCoord, yCoord, zCoord);
 	}
+	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
@@ -239,6 +242,7 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 		nbttagcompound.setString("Owner", Owner);
 	}
 
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
@@ -270,17 +274,17 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 				for (int b=0; b<theList.size(); b++)
 				{
 					Orientations newPos = theList.get(b);
-					Position destPos = new Position((int) pipeList.get(a).xCoord, pipeList.get(a).yCoord, pipeList.get(a).zCoord, newPos);
+					Position destPos = new Position(pipeList.get(a).xCoord, pipeList.get(a).yCoord, pipeList.get(a).zCoord, newPos);
 					destPos.moveForwards(1.0);
 
 					//System.out.println(getPosition().toString() + " RequestEnergy: " + from.toString() + " - Val: " + is + " - Dest: " + destPos.toString());
 
 					TileEntity tile = worldObj.getBlockTileEntity((int)destPos.x, (int)destPos.y, (int)destPos.z);
-					if (tile instanceof TileGenericPipe) {							
+					if (tile instanceof TileGenericPipe) {
 						TileGenericPipe nearbyTile = (TileGenericPipe) tile;
 						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
 						nearbyTransport.requestEnergy(newPos.reverse(), is);
-					} 
+					}
 				}
 			}
 		}
@@ -306,4 +310,6 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 
 		return packet;
 	}
+
+
 }

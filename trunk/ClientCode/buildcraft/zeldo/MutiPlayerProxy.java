@@ -1,5 +1,8 @@
 package net.minecraft.src.buildcraft.zeldo;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,6 +14,9 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import javax.imageio.ImageIO;
+
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModLoaderMp;
@@ -18,11 +24,13 @@ import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.mod_zAdditionalPipes;
 import net.minecraft.src.mod_zAdditionalPipes.chunkXZ;
 import net.minecraft.src.buildcraft.api.APIProxy;
+import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiAdvancedWoodPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiItemTeleportPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiLiquidTeleportPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiPowerTeleportPipe;
+import net.minecraft.src.forge.MinecraftForgeClient;
 
 public class MutiPlayerProxy {
 	public static boolean NeedsLoad = true;
@@ -54,6 +62,40 @@ public class MutiPlayerProxy {
 			ModLoaderMp.SendPacket(mod_zAdditionalPipes.instance, requestUpdatePacket( x, y, z, mod_zAdditionalPipes.PACKET_REQ_ITEM));
 		}
 	}
+	public static File TextureOverride = new File(CoreProxy.getBuildCraftBase(), "Block_Override.png");
+	public static int AddOverride(BufferedImage fgImage, int x, int y)
+	{
+		checkTextureExists();
+		BufferedImage bgImage;
+		try {
+			bgImage = ImageIO.read(TextureOverride);
+			Graphics2D g = bgImage.createGraphics();
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g.drawImage(fgImage, x, y, null);
+			g.dispose();
+			ImageIO.write(bgImage, "PNG", TextureOverride);
+			BuildCraftCore.customBuildCraftTexture = TextureOverride.getAbsolutePath();
+			System.out.println("TexPath: " + BuildCraftCore.customBuildCraftTexture);
+			MinecraftForgeClient.preloadTexture(BuildCraftCore.customBuildCraftTexture);
+			return 0;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	public static void checkTextureExists()
+	{
+		System.out.println("TexExis: " + TextureOverride.exists());
+		if (!TextureOverride.exists())
+		{
+			try {
+				System.out.println("CheckTex");
+				ImageIO.write(ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, BuildCraftCore.customBuildCraftTexture), "PNG", TextureOverride);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	public static Packet230ModLoader requestUpdatePacket(int x, int y, int z, int PacketID) {
 		Packet230ModLoader packet = new Packet230ModLoader();
 
@@ -81,32 +123,32 @@ public class MutiPlayerProxy {
 		z = z >> 4;
 		Iterator<chunkXZ> chunks = mod_zAdditionalPipes.keepLoadedChunks.iterator();
 		while (chunks.hasNext()) {
-			chunkXZ curChunk = (chunkXZ)chunks.next();
+			chunkXZ curChunk = chunks.next();
 			if (curChunk.x == x && curChunk.z == z) {
 				//System.out.println("Didn't need to add PermChunk @ " + x + "," + z);
 				return;
 			}
-				
+
 		}
 		mod_zAdditionalPipes.keepLoadedChunks.add(new mod_zAdditionalPipes.chunkXZ(x, z));
-		 //System.out.println("Added PermChunk @ " + x + "," + z);
-		 SaveChunkData();
+		//System.out.println("Added PermChunk @ " + x + "," + z);
+		SaveChunkData();
 	}
 	public static void SaveChunkData() {
 		try {
-			
+
 			//System.out.println("Saving ChunkLoader data...");
-	        FileOutputStream fos = new FileOutputStream(getChunkSaveFile().getAbsolutePath());
-	        GZIPOutputStream gzos = new GZIPOutputStream(fos);
-	        ObjectOutputStream out = new ObjectOutputStream(gzos);
-	        out.writeObject(mod_zAdditionalPipes.keepLoadedChunks);
-	        out.flush();
-	        out.close();
-	        //System.out.println("Saved ChunkLoader data...");
-	     }
-	     catch (IOException e) {
-	    	 e.printStackTrace(); 
-	     }
+			FileOutputStream fos = new FileOutputStream(getChunkSaveFile().getAbsolutePath());
+			GZIPOutputStream gzos = new GZIPOutputStream(fos);
+			ObjectOutputStream out = new ObjectOutputStream(gzos);
+			out.writeObject(mod_zAdditionalPipes.keepLoadedChunks);
+			out.flush();
+			out.close();
+			//System.out.println("Saved ChunkLoader data...");
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	@SuppressWarnings("unchecked")
 	public static void LoadChunkData() {
@@ -115,18 +157,18 @@ public class MutiPlayerProxy {
 		if (!NeedsLoad)
 			return;
 		NeedsLoad = false;
-		 try {
-		        FileInputStream fis = new FileInputStream(getChunkSaveFile().getAbsolutePath());
-		        GZIPInputStream gzis = new GZIPInputStream(fis);
-		        ObjectInputStream in = new ObjectInputStream(gzis);
-		        List<mod_zAdditionalPipes.chunkXZ> loaded = (List<mod_zAdditionalPipes.chunkXZ>)in.readObject();
-		        in.close();
-		        mod_zAdditionalPipes.keepLoadedChunks = loaded;
-		        System.out.println("Loaded " + loaded.size() + " Forced Chunks");
-		      }
-		      catch (Exception e) {
-		          e.printStackTrace();
-		      }
+		try {
+			FileInputStream fis = new FileInputStream(getChunkSaveFile().getAbsolutePath());
+			GZIPInputStream gzis = new GZIPInputStream(fis);
+			ObjectInputStream in = new ObjectInputStream(gzis);
+			List<mod_zAdditionalPipes.chunkXZ> loaded = (List<mod_zAdditionalPipes.chunkXZ>)in.readObject();
+			in.close();
+			mod_zAdditionalPipes.keepLoadedChunks = loaded;
+			System.out.println("Loaded " + loaded.size() + " Forced Chunks");
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	public static void DeleteChunkFromList(int x, int z) {
 		if (isOnServer())
@@ -136,14 +178,14 @@ public class MutiPlayerProxy {
 		z = z >> 4;
 		Iterator<chunkXZ> chunks = mod_zAdditionalPipes.keepLoadedChunks.iterator();
 		while (chunks.hasNext()) {
-			chunkXZ curChunk = (chunkXZ)chunks.next();
+			chunkXZ curChunk = chunks.next();
 			if (curChunk.x == x && curChunk.z == z) {
 				mod_zAdditionalPipes.keepLoadedChunks.remove(curChunk);
 				//System.out.println("Removed PermChunk @ " + x + "," + z);
 				SaveChunkData();
 				return;
 			}
-				
+
 		}
 	}
 	public static File getChunkSaveFile() {
@@ -152,5 +194,9 @@ public class MutiPlayerProxy {
 			WorldDir = mod_zAdditionalPipes.getSaveDirectory();
 		return new File(WorldDir, "ChunkLoader.doNotTouch");
 	}
-	
+	public static void bindTex()
+	{
+		MinecraftForgeClient.bindTexture(mod_zAdditionalPipes.MASTER_TEXTURE_FILE);
+	}
+
 }
