@@ -1,5 +1,5 @@
-/** 
- * BuildCraft is open-source. It is distributed under the terms of the 
+/**
+ * BuildCraft is open-source. It is distributed under the terms of the
  * BuildCraft Open Source License. It grants rights to read, modify, compile
  * or run the code. It does *NOT* grant the right to redistribute this software
  * or its modifications in any form, binary or source, except if expressively
@@ -27,7 +27,7 @@ import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
 import net.minecraft.src.buildcraft.zeldo.logic.PipeLogicLiquidTeleport;
 
 public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHook {
-	
+
 	class OilReturn {
 		public Orientations theOrientation;
 		public ILiquidContainer iliquid;
@@ -36,7 +36,7 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 			iliquid = b;
 		}
 	}
-	
+
 	public @TileNetworkData int myFreq = 0;
 	public @TileNetworkData boolean canReceive = false;
 	public @TileNetworkData String Owner = "";
@@ -50,9 +50,10 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 
 	@Override
 	public int getBlockTexture() {
+		MutiPlayerProxy.bindTex();
 		return mod_zAdditionalPipes.DEFUALT_LIQUID_TELEPORT_TEXTURE;
 	}
-	
+
 	public void removeOldPipes()
 	{
 		LinkedList <PipeLiquidsTeleport> toRemove = new LinkedList <PipeLiquidsTeleport> ();
@@ -64,7 +65,8 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 		}
 		LiquidTeleportPipes.removeAll(toRemove);
 	}
-	
+
+	@Override
 	public void setPosition (int xCoord, int yCoord, int zCoord) {
 		LinkedList <PipeLiquidsTeleport> toRemove = new LinkedList <PipeLiquidsTeleport> ();
 		for (int i=0; i< LiquidTeleportPipes.size(); i++) {
@@ -76,7 +78,7 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 		LiquidTeleportPipes.removeAll(toRemove);
 		super.setPosition(xCoord, yCoord, zCoord);
 	}
-	
+
 	public List<PipeLiquidsTeleport> getConnectedPipes(boolean ignoreReceive) {
 		List<PipeLiquidsTeleport> Temp = new LinkedList<PipeLiquidsTeleport>();
 		removeOldPipes();
@@ -96,6 +98,7 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 
 		return Temp;
 	}
+	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
@@ -104,6 +107,7 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 		nbttagcompound.setString("Owner", Owner);
 	}
 
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
@@ -133,9 +137,9 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 		}
 		//System.out.println("Fill " + used);
 		return used;
-		
+
 	}
-	
+
 	public LinkedList<OilReturn> getPossibleLiquidMovements(Position pos) {
 		LinkedList<OilReturn> result = new LinkedList<OilReturn>();
 
@@ -154,7 +158,7 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 
 		return result;
 	}
-	
+
 	public Position getPosition() {
 		return new Position (xCoord, yCoord, zCoord);
 	}
@@ -179,5 +183,5 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 
 		return packet;
 	}
-	
+
 }

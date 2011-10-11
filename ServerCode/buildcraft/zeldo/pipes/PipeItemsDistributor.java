@@ -1,5 +1,5 @@
-/** 
- * BuildCraft is open-source. It is distributed under the terms of the 
+/**
+ * BuildCraft is open-source. It is distributed under the terms of the
  * BuildCraft Open Source License. It grants rights to read, modify, compile
  * or run the code. It does *NOT* grant the right to redistribute this software
  * or its modifications in any form, binary or source, except if expressively
@@ -18,10 +18,11 @@ import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.transport.IPipeTransportItemsHook;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
+import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
 import net.minecraft.src.buildcraft.zeldo.logic.PipeLogicDistributor;
 
 public class PipeItemsDistributor extends Pipe implements IPipeTransportItemsHook {
-	
+
 	private int baseTexture = mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE;
 	private int plainTexture = mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED;
 	private @TileNetworkData int nextTexture = baseTexture;
@@ -29,7 +30,7 @@ public class PipeItemsDistributor extends Pipe implements IPipeTransportItemsHoo
 	public PipeItemsDistributor(int itemID) {
 		super(new PipeTransportItems(), new PipeLogicDistributor(), itemID);
 	}
-	
+
 	@Override
 	public void prepareTextureFor(Orientations connection) {
 		if (connection == Orientations.Unknown) {
@@ -44,9 +45,10 @@ public class PipeItemsDistributor extends Pipe implements IPipeTransportItemsHoo
 			}
 		}
 	}
-	
+
 	@Override
 	public int getBlockTexture() {
+		MutiPlayerProxy.bindTex();
 		return nextTexture;
 	}
 
@@ -61,8 +63,8 @@ public class PipeItemsDistributor extends Pipe implements IPipeTransportItemsHoo
 	}
 
 	@Override
-	public void entityEntered(EntityPassiveItem item, Orientations orientation) {	
-		
+	public void entityEntered(EntityPassiveItem item, Orientations orientation) {
+
 	}
 
 	@Override

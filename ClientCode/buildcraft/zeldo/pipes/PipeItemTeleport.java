@@ -1,5 +1,5 @@
-/** 
- * BuildCraft is open-source. It is distributed under the terms of the 
+/**
+ * BuildCraft is open-source. It is distributed under the terms of the
  * BuildCraft Open Source License. It grants rights to read, modify, compile
  * or run the code. It does *NOT* grant the right to redistribute this software
  * or its modifications in any form, binary or source, except if expressively
@@ -31,9 +31,8 @@ import net.minecraft.src.buildcraft.transport.PipeTransportItems;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
 import net.minecraft.src.buildcraft.zeldo.logic.PipeLogicItemTeleport;
-import net.minecraft.src.forge.ITextureProvider;
 
-public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook, ITextureProvider {
+public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 
 	public @TileNetworkData int myFreq = 0;
 	public @TileNetworkData boolean canReceive = false;
@@ -47,10 +46,12 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook, I
 		//System.out.println("Exists: " + (container != null));
 	}
 
+	@Override
 	public int getBlockTexture() {
+		MutiPlayerProxy.bindTex();
 		return mod_zAdditionalPipes.DEFUALT_ITEM_TELEPORT_TEXTURE;
 	}
-	
+
 	public void removeOldPipes()
 	{
 		LinkedList <PipeItemTeleport> toRemove = new LinkedList <PipeItemTeleport> ();
@@ -65,8 +66,9 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook, I
 
 	@Override
 	public void readjustSpeed(EntityPassiveItem item) {
-		((PipeTransportItems) transport).defaultReajustSpeed(item);		
-	}	
+		((PipeTransportItems) transport).defaultReajustSpeed(item);
+	}
+	@Override
 	public void setPosition (int xCoord, int yCoord, int zCoord) {
 		LinkedList <PipeItemTeleport> toRemove = new LinkedList <PipeItemTeleport> ();
 		for (int i=0; i< ItemTeleportPipes.size(); i++) {
@@ -101,6 +103,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook, I
 		return new Position (xCoord, yCoord, zCoord);
 	}
 
+	@Override
 	public void updateEntity() {
 		for (int theID : idsToRemove) {
 			((PipeTransportItems)transport).travelingEntities.remove(theID);
@@ -133,11 +136,11 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook, I
 
 		Orientations newPos = Temp.get(worldObj.rand.nextInt(Temp.size()));
 		//System.out.println(newPos.toString());
-		Position destPos = new Position((int) TempTeleport.get(i).xCoord, TempTeleport.get(i).yCoord, TempTeleport.get(i).zCoord, newPos);
+		Position destPos = new Position(TempTeleport.get(i).xCoord, TempTeleport.get(i).yCoord, TempTeleport.get(i).zCoord, newPos);
 		destPos.moveForwards(1.0);
 
 		TileEntity tile = worldObj.getBlockTileEntity((int)destPos.x, (int)destPos.y, (int)destPos.z);
-		if (tile instanceof TileGenericPipe) 
+		if (tile instanceof TileGenericPipe)
 		{
 			TileGenericPipe pipe = (TileGenericPipe)tile;
 			if (pipe.pipe.transport instanceof PipeTransportItems)
@@ -149,7 +152,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook, I
 				((PipeTransportItems)pipe.pipe.transport).entityEntering(item, newPos);
 			}
 		}
-		else if (tile instanceof IPipeEntry) 
+		else if (tile instanceof IPipeEntry)
 		{
 			idsToRemove.add(item.entityId);
 			Position newItemPos = getNewItemPos(destPos, newPos, Utils.getPipeFloorOf(item.item));
@@ -162,7 +165,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook, I
 			if (!APIProxy.isClient(worldObj)) {
 				if (utils.checkAvailableSlot((IInventory) tile, true, destPos.orientation.reverse()) && utils.items.stackSize == 0) {
 					idsToRemove.add(item.entityId);
-					// Do nothing, we're adding the object to the world							
+					// Do nothing, we're adding the object to the world
 				} else {
 					//Wont accept it return...
 					newPos = pos.orientation.reverse();
@@ -228,6 +231,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook, I
 	@Override
 	public void entityEntered(EntityPassiveItem item, Orientations orientation) {}
 
+	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
@@ -236,6 +240,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook, I
 		nbttagcompound.setString("Owner", Owner);
 	}
 
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
@@ -243,7 +248,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook, I
 		canReceive = nbttagcompound.getBoolean("Rec");
 		Owner = nbttagcompound.getString("Owner");
 	}
-	
+
 	public Packet230ModLoader getDescPipe() {
 		Packet230ModLoader packet = new Packet230ModLoader();
 
@@ -264,11 +269,6 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook, I
 
 
 		return packet;
-	}
-
-	@Override
-	public String getTextureFile() {
-		return mod_zAdditionalPipes.DEFUALT_ITEM_TELEPORT_TEXTURE_FILE;
 	}
 
 }

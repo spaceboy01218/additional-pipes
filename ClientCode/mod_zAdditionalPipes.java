@@ -3,7 +3,6 @@ package net.minecraft.src;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -44,46 +43,42 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		}
 	}
 
+
+	public static int MASTER_TEXTURE_OFFSET = 8 * 16;
+	public static String MASTER_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/block_textures.png";
+
 	//Item Teleport
 	public static Item pipeItemTeleport;
 	public static int DEFUALT_ITEM_TELEPORT_ID = 4047;
-	public static int DEFUALT_ITEM_TELEPORT_TEXTURE = 8 * 16 + 0;
-	public static String DEFUALT_ITEM_TELEPORT_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/BlueItem.png";
+	public static int DEFUALT_ITEM_TELEPORT_TEXTURE = 0;
 
 	//Liquid Teleport
 	public static Item pipeLiquidTeleport;
 	public static int DEFUALT_LIQUID_TELEPORT_ID = 4048;
-	public static int DEFUALT_LIQUID_TELEPORT_TEXTURE = 8 * 16 + 2;
-	public static String DEFUALT_LIQUID_TELEPORT_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/BlueLiquid.png";
+	public static int DEFUALT_LIQUID_TELEPORT_TEXTURE = 2;
 
 	//Power Teleport
 	public static Item pipePowerTeleport;
 	public static int DEFUALT_POWER_TELEPORT_ID = 4049;
-	public static int DEFUALT_POWER_TELEPORT_TEXTURE = 8 * 16 + 3;
-	public static String DEFUALT_POWER_TELEPORT_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/BluePower.png";
+	public static int DEFUALT_POWER_TELEPORT_TEXTURE = 3;
 
 	//Distributor
 	public static Item pipeDistributor;
 	public static int DEFUALT_DISTRIBUTOR_TELEPORT_ID = 4046;
-	public static int DEFUALT_DISTRIBUTOR_TEXTURE = 8*16+4;
-	public static int DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED = 8*16+5;
-	public static String DEFUALT_DISTRIBUTOR_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/DistributionOpen.png";
-	public static String DEFUALT_DISTRIBUTOR_TEXTURE_FILE_CLOSED = "/net/minecraft/src/buildcraft/zeldo/gui/DistributionClosed.png";
+	public static int DEFUALT_DISTRIBUTOR_TEXTURE = 4;
+	public static int DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED = 5;
 
 	//Advanced Wood
 	public static Item pipeAdvancedWood;
 	public static int DEFUALT_ADVANCEDWOOD_ID = 4045;
-	public static int DEFUALT_ADVANCEDWOOD_TEXTURE = 8*16+6;
-	public static int DEFUALT_ADVANCEDWOOD_TEXTURE_CLOSED = 8*16+7;
-	public static String DEFUALT_ADVANCEDWOOD_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/AdvancedWood.png";
-	public static String DEFUALT_ADVANCEDWOOD_FILE_CLOSED = "/net/minecraft/src/buildcraft/zeldo/gui/AdvancedWoodClosed.png";
+	public static int DEFUALT_ADVANCEDWOOD_TEXTURE = 6;
+	public static int DEFUALT_ADVANCEDWOOD_TEXTURE_CLOSED = 7;
 
 	//Advanced Insertion
 	public static Item pipeAdvancedInsertion;
 	public static int DEFUALT_Insertion_ID = 4044;
-	public static int DEFUALT_Insertion_TEXTURE = 8*16+6;
-	public static int DEFUALT_Insertion_TEXTURE_CLOSED = 8*16+7;
-	public static String DEFUALT_Insertion_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/AdvancedWood.png";
+	public static int DEFUALT_Insertion_TEXTURE = 6;
+	public static int DEFUALT_Insertion_TEXTURE_CLOSED = 7;
 
 	//GUI Packet Ids
 	public static int GUI_ITEM_SEND = 255;
@@ -96,16 +91,16 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static int GUI_ADVANCEDWOOD_REC = -4;
 
 	//Main Packet ID's
-		public static int PACKET_SET_AW = 1;
-		public static int PACKET_SET_ITEM = 2;
-		public static int PACKET_SET_LIQUID = 3;
-		public static int PACKET_SET_POWER = 4;
-		public static int PACKET_REQ_ITEM = 5;
-		public static int PACKET_REQ_LIQUID = 6;
-		public static int PACKET_REQ_POWER = 7;
-		public static int PACKET_GUI_COUNT = 8;
-		
-		public static int CurrentGUICount = 0;
+	public static int PACKET_SET_AW = 1;
+	public static int PACKET_SET_ITEM = 2;
+	public static int PACKET_SET_LIQUID = 3;
+	public static int PACKET_SET_POWER = 4;
+	public static int PACKET_REQ_ITEM = 5;
+	public static int PACKET_REQ_LIQUID = 6;
+	public static int PACKET_REQ_POWER = 7;
+	public static int PACKET_GUI_COUNT = 8;
+
+	public static int CurrentGUICount = 0;
 
 
 
@@ -125,6 +120,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		ModLoader.SetInGameHook(this, true, true);
 		ModLoader.SetInGUIHook(this, true, true);
 	}
+	@Override
 	public boolean OnTickInGame(Minecraft minecraft)
 	{
 		if (System.currentTimeMillis() - chunkTestTime >= lastCheckTime) {
@@ -134,7 +130,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 			}
 			Iterator<chunkXZ> chunks = keepLoadedChunks.iterator();
 			while (chunks.hasNext()) {
-				chunkXZ curChunk = (chunkXZ)chunks.next();
+				chunkXZ curChunk = chunks.next();
 				if (minecraft.theWorld.chunkProvider.chunkExists(curChunk.x,curChunk.z)) {
 					//System.out.print("A: " + minecraft.theWorld.chunkProvider.provideChunk(curChunk.x,curChunk.z).isChunkLoaded + "\n");
 				} else {
@@ -151,6 +147,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		}
 		return true;
 	}
+	@Override
 	public boolean OnTickInGUI(Minecraft minecraft, GuiScreen guiscreen)
 	{
 
@@ -167,15 +164,15 @@ public class mod_zAdditionalPipes extends BaseModMp {
 				keepLoadedChunks.clear();
 				MutiPlayerProxy.NeedsLoad = true;
 				isInGame = false;
-				AddImageOverride();
 			}
 		} else {
-			isInGame = true;	
+			isInGame = true;
 		}
 		return true;
 	}
 	public static File getSaveDirectory() { return ((SaveHandler)ModLoader.getMinecraftInstance().theWorld.saveHandler).getSaveDirectory(); }
-	public void ModsLoaded () {	
+	@Override
+	public void ModsLoaded () {
 		ModLoaderMp.RegisterGUI(this, GUI_ADVANCEDWOOD_REC);
 		ModLoaderMp.RegisterGUI(this, GUI_ENERGY_REC);
 		ModLoaderMp.RegisterGUI(this, GUI_ITEM_REC);
@@ -192,8 +189,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		//BuildCraftCore.customBuildCraftTexture = mod_AdditionalPipes.BUILDCRAFT_OVERRIDE_TEXTURE;
 		//MinecraftForgeClient.preloadTexture(BuildCraftCore.customBuildCraftTexture);
 		//ModLoader.addOverride(BuildCraftCore.customBuildCraftTexture, "/net/minecraft/src/zeldo/gui/pipe.png");
-		//MinecraftForgeClient.preloadTexture("/buildcraft/zeldo/gui/pipe.png");
-		AddImageOverride();
+		MinecraftForgeClient.preloadTexture(mod_zAdditionalPipes.MASTER_TEXTURE_FILE);
 
 		pipeItemTeleport = createPipe (mod_zAdditionalPipes.DEFUALT_ITEM_TELEPORT_ID, PipeItemTeleport.class, "Item Teleport Pipe", BuildCraftCore.diamondGearItem, Block.glass, BuildCraftCore.diamondGearItem, null);
 		pipeLiquidTeleport = createPipe (mod_zAdditionalPipes.DEFUALT_LIQUID_TELEPORT_ID, PipeLiquidsTeleport.class, "Waterproof Teleport Pipe", BuildCraftTransport.pipeWaterproof, pipeItemTeleport, null, null);
@@ -209,7 +205,8 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 
 	}
-	public GuiScreen HandleGUI(int inventoryType) 
+	@Override
+	public GuiScreen HandleGUI(int inventoryType)
 	{
 		//System.out.println("InvType: " + inventoryType);
 		if(inventoryType == GUI_LIQUID_REC)
@@ -229,45 +226,29 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 		return null;
 	}
-	@SuppressWarnings("rawtypes")
-	public void AddImageOverride()
+
+	public byte [] ReDim(byte [] array, int newSize)
 	{
-		//ImageFunctions.writeImage(ImageFunctions.overlayImages(BuildCraftCore.customBuildCraftTexture, mod_zAdditionalPipes.DEFUALT_ITEM_TELEPORT_TEXTURE_FILE, 0, DEFUALT_ITEM_TELEPORT_TEXTURE), new File(CoreProxy.getBuildCraftBase(), "overrides/block_tex.png").getAbsolutePath(), "png");
-		//BuildCraftCore.addCustomTexture(mod_zAdditionalPipes.DEFUALT_ITEM_TELEPORT_TEXTURE_FILE);
-		//BuildCraftCore.addCustomTexture(mod_zAdditionalPipes.DEFUALT_LIQUID_TELEPORT_TEXTURE_FILE);
-		//BuildCraftCore.addCustomTexture(mod_zAdditionalPipes.DEFUALT_POWER_TELEPORT_TEXTURE_FILE);
-		//BuildCraftCore.addCustomTexture(mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_FILE);
-		//BuildCraftCore.addCustomTexture(mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_FILE_CLOSED);
-		//BuildCraftCore.addCustomTexture(mod_zAdditionalPipes.DEFUALT_ADVANCEDWOOD_FILE);
-		//BuildCraftCore.addCustomTexture(mod_zAdditionalPipes.DEFUALT_ADVANCEDWOOD_FILE_CLOSED);
-		
+		byte [] abytNew = new byte[newSize];
+		System.arraycopy(array, 0, abytNew, 0, array.length);
+		return abytNew;
+	}
+	public int getTileSize() {
 		try {
-			HashMap textures = new HashMap();
-			textures = (HashMap) ModLoader.getPrivateValue(RenderEngine.class, ModLoader.getMinecraftInstance().renderEngine, 1);
-			int i = (Integer) textures.get(BuildCraftCore.customBuildCraftTexture);
-			ModTextureStatic modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_ITEM_TELEPORT_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_ITEM_TELEPORT_TEXTURE_FILE));
-			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
-			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_LIQUID_TELEPORT_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_LIQUID_TELEPORT_TEXTURE_FILE));
-			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
-			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_POWER_TELEPORT_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_POWER_TELEPORT_TEXTURE_FILE));
-			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
-			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_FILE));
-			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
-			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_FILE_CLOSED));
-			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
-			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_ADVANCEDWOOD_TEXTURE_CLOSED, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_ADVANCEDWOOD_FILE_CLOSED));
-			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
-			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_ADVANCEDWOOD_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_ADVANCEDWOOD_FILE));
-			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
+			return Class.forName("com.pclewis.mcpatcher.mod.TileSize").getField("int_numBytes").getInt(Class.forName("com.pclewis.mcpatcher.mod.TileSize").getClass());
+		} catch( ClassNotFoundException e ) {
+			return 1024;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return 1024;
 	}
 
 	@Override
 	public String Version() {
 		return "1.5";
 	}
+	@Override
 	public void HandlePacket(Packet230ModLoader packet) {
 		//System.out.println("Packet: " + packet.packetType);
 		if (packet.packetType == PACKET_SET_AW) {
@@ -329,7 +310,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static boolean intToBool(int a) {
 		return (a == 1);
 	}
-	
+
 	public static int boolToInt(boolean a) {
 		if (a)
 			return 1;
@@ -350,22 +331,22 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 		CraftingManager craftingmanager = CraftingManager.getInstance();
 
-		if (r1 != null && r2 != null && r3 != null && r4 != null) {						
+		if (r1 != null && r2 != null && r3 != null && r4 != null) {
 			craftingmanager.addRecipe(new ItemStack(res, 8), new Object[] {
-				" D ", "ABC", "   ", 
+				" D ", "ABC", "   ",
 				Character.valueOf('D'), r1,
 				Character.valueOf('A'), r2,
 				Character.valueOf('B'), r3,
 				Character.valueOf('C'), r4});
-		} else if (r1 != null && r2 != null && r3 != null) {						
+		} else if (r1 != null && r2 != null && r3 != null) {
 			craftingmanager.addRecipe(new ItemStack(res, 8), new Object[] {
-				"   ", "ABC", "   ", 
+				"   ", "ABC", "   ",
 				Character.valueOf('A'), r1,
 				Character.valueOf('B'), r2,
 				Character.valueOf('C'), r3});
 		} else if (r1 != null && r2 != null) {
 			craftingmanager.addRecipe(new ItemStack(res, 1), new Object[] {
-				"A ", "B ", 
+				"A ", "B ",
 				Character.valueOf('A'), r1,
 				Character.valueOf('B'), r2});
 		}

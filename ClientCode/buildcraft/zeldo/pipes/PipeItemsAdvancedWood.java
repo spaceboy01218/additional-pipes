@@ -1,5 +1,5 @@
-/** 
- * BuildCraft is open-source. It is distributed under the terms of the 
+/**
+ * BuildCraft is open-source. It is distributed under the terms of the
  * BuildCraft Open Source License. It grants rights to read, modify, compile
  * or run the code. It does *NOT* grant the right to redistribute this software
  * or its modifications in any form, binary or source, except if expressively
@@ -29,6 +29,7 @@ import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
+import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
 import net.minecraft.src.buildcraft.zeldo.logic.PipeLogicAdvancedWood;
 
 public class PipeItemsAdvancedWood extends Pipe implements IPowerReceptor {
@@ -49,6 +50,7 @@ public class PipeItemsAdvancedWood extends Pipe implements IPowerReceptor {
 
 	@Override
 	public int getBlockTexture() {
+		MutiPlayerProxy.bindTex();
 		return nextTexture;
 	}
 
@@ -79,7 +81,7 @@ public class PipeItemsAdvancedWood extends Pipe implements IPowerReceptor {
 	}
 
 	@Override
-	public void doWork() {	
+	public void doWork() {
 		if (powerProvider.energyStored <= 0) {
 			return;
 		}
@@ -138,10 +140,10 @@ public class PipeItemsAdvancedWood extends Pipe implements IPowerReceptor {
 	 */
 	public ItemStack checkExtract(IInventory inventory, boolean doRemove,
 			Orientations from) {
-//		if (inventory instanceof ISpecialInventory) {
-//			//At the moment we are going to let special inventorys handle there own. Might change if popular demand
-//			return ((ISpecialInventory) inventory).extractItem(doRemove, from);
-//		}
+		//		if (inventory instanceof ISpecialInventory) {
+		//			//At the moment we are going to let special inventorys handle there own. Might change if popular demand
+		//			return ((ISpecialInventory) inventory).extractItem(doRemove, from);
+		//		}
 		IInventory inv = Utils.getInventory(inventory);
 		ItemStack result = checkExtractGeneric(inv, doRemove, from);
 		return result;
@@ -179,7 +181,7 @@ public class PipeItemsAdvancedWood extends Pipe implements IPowerReceptor {
 				} else if (stack.getItemDamage() == item.getItemDamage()) {
 					return !((PipeLogicAdvancedWood)this.logic).exclude;
 				}
-			} 
+			}
 		}
 		return ((PipeLogicAdvancedWood)this.logic).exclude;
 	}
@@ -188,15 +190,17 @@ public class PipeItemsAdvancedWood extends Pipe implements IPowerReceptor {
 	public int powerRequest() {
 		return getPowerProvider().maxEnergyReceived;
 	}
-	
+
+	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
-		
+
 	}
 
+	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
-		
+
 	}
 
 	public Packet230ModLoader getDescPacket() {
