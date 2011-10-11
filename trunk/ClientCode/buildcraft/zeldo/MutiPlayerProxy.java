@@ -1,0 +1,156 @@
+package net.minecraft.src.buildcraft.zeldo;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ModLoader;
+import net.minecraft.src.ModLoaderMp;
+import net.minecraft.src.Packet230ModLoader;
+import net.minecraft.src.mod_zAdditionalPipes;
+import net.minecraft.src.mod_zAdditionalPipes.chunkXZ;
+import net.minecraft.src.buildcraft.api.APIProxy;
+import net.minecraft.src.buildcraft.transport.TileGenericPipe;
+import net.minecraft.src.buildcraft.zeldo.gui.GuiAdvancedWoodPipe;
+import net.minecraft.src.buildcraft.zeldo.gui.GuiItemTeleportPipe;
+import net.minecraft.src.buildcraft.zeldo.gui.GuiLiquidTeleportPipe;
+import net.minecraft.src.buildcraft.zeldo.gui.GuiPowerTeleportPipe;
+
+public class MutiPlayerProxy {
+	public static boolean NeedsLoad = true;
+	public static File WorldDir;
+	public static boolean isServer = false;
+	public static void displayGUIItemTeleport(EntityPlayer entityplayer, TileGenericPipe tilePipe) {
+		if (!APIProxy.isClient(APIProxy.getWorld())) {
+			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiItemTeleportPipe(tilePipe));
+		}
+	}
+	public static void displayGUILiquidTeleport(EntityPlayer entityplayer, TileGenericPipe tilePipe) {
+		if (!APIProxy.isClient(APIProxy.getWorld())) {
+			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiLiquidTeleportPipe(tilePipe));
+		}
+	}
+	public static void displayGUIPowerTeleport(EntityPlayer entityplayer, TileGenericPipe tilePipe) {
+		if (!APIProxy.isClient(APIProxy.getWorld())) {
+			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiPowerTeleportPipe(tilePipe));
+		}
+	}
+	public static void displayGUIAdvancedWood(EntityPlayer entityplayer, TileGenericPipe container) {
+		if (!APIProxy.isClient(APIProxy.getWorld())) {
+			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiAdvancedWoodPipe(entityplayer.inventory, container, container));
+		}
+	}
+	public static void requestItemTeleport(int x, int y, int z) {
+		if (APIProxy.isClient(APIProxy.getWorld())) {
+			//System.out.println("Send Request for pipe");
+			ModLoaderMp.SendPacket(mod_zAdditionalPipes.instance, requestUpdatePacket( x, y, z, mod_zAdditionalPipes.PACKET_REQ_ITEM));
+		}
+	}
+	public static Packet230ModLoader requestUpdatePacket(int x, int y, int z, int PacketID) {
+		Packet230ModLoader packet = new Packet230ModLoader();
+
+		packet.modId = mod_zAdditionalPipes.instance.getId();
+		packet.packetType = PacketID;
+		packet.isChunkDataPacket = true;
+
+		packet.dataInt = new int [3];
+
+		packet.dataInt [0] = x;
+		packet.dataInt [1] = y;
+		packet.dataInt [2] = z;
+
+		return packet;
+	}
+	public static boolean isOnServer()
+	{
+		return ModLoader.getMinecraftInstance().theWorld.multiplayerWorld;
+	}
+	public static void AddChunkToList(int x, int z) {
+		if (isOnServer())
+			return;
+		MutiPlayerProxy.LoadChunkData();
+		x = x >> 4;
+		z = z >> 4;
+		Iterator<chunkXZ> chunks = mod_zAdditionalPipes.keepLoadedChunks.iterator();
+		while (chunks.hasNext()) {
+			chunkXZ curChunk = (chunkXZ)chunks.next();
+			if (curChunk.x == x && curChunk.z == z) {
+				//System.out.println("Didn't need to add PermChunk @ " + x + "," + z);
+				return;
+			}
+				
+		}
+		mod_zAdditionalPipes.keepLoadedChunks.add(new mod_zAdditionalPipes.chunkXZ(x, z));
+		 //System.out.println("Added PermChunk @ " + x + "," + z);
+		 SaveChunkData();
+	}
+	public static void SaveChunkData() {
+		try {
+			
+			//System.out.println("Saving ChunkLoader data...");
+	        FileOutputStream fos = new FileOutputStream(getChunkSaveFile().getAbsolutePath());
+	        GZIPOutputStream gzos = new GZIPOutputStream(fos);
+	        ObjectOutputStream out = new ObjectOutputStream(gzos);
+	        out.writeObject(mod_zAdditionalPipes.keepLoadedChunks);
+	        out.flush();
+	        out.close();
+	        //System.out.println("Saved ChunkLoader data...");
+	     }
+	     catch (IOException e) {
+	    	 e.printStackTrace(); 
+	     }
+	}
+	@SuppressWarnings("unchecked")
+	public static void LoadChunkData() {
+		if (isOnServer())
+			return;
+		if (!NeedsLoad)
+			return;
+		NeedsLoad = false;
+		 try {
+		        FileInputStream fis = new FileInputStream(getChunkSaveFile().getAbsolutePath());
+		        GZIPInputStream gzis = new GZIPInputStream(fis);
+		        ObjectInputStream in = new ObjectInputStream(gzis);
+		        List<mod_zAdditionalPipes.chunkXZ> loaded = (List<mod_zAdditionalPipes.chunkXZ>)in.readObject();
+		        in.close();
+		        mod_zAdditionalPipes.keepLoadedChunks = loaded;
+		        System.out.println("Loaded " + loaded.size() + " Forced Chunks");
+		      }
+		      catch (Exception e) {
+		          e.printStackTrace();
+		      }
+	}
+	public static void DeleteChunkFromList(int x, int z) {
+		if (isOnServer())
+			return;
+		MutiPlayerProxy.LoadChunkData();
+		x = x >> 4;
+		z = z >> 4;
+		Iterator<chunkXZ> chunks = mod_zAdditionalPipes.keepLoadedChunks.iterator();
+		while (chunks.hasNext()) {
+			chunkXZ curChunk = (chunkXZ)chunks.next();
+			if (curChunk.x == x && curChunk.z == z) {
+				mod_zAdditionalPipes.keepLoadedChunks.remove(curChunk);
+				//System.out.println("Removed PermChunk @ " + x + "," + z);
+				SaveChunkData();
+				return;
+			}
+				
+		}
+	}
+	public static File getChunkSaveFile() {
+		//With MC being dumb we have to load the world location ourselfs
+		if (WorldDir == null)
+			WorldDir = mod_zAdditionalPipes.getSaveDirectory();
+		return new File(WorldDir, "ChunkLoader.doNotTouch");
+	}
+	
+}
