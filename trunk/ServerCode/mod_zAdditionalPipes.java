@@ -15,6 +15,7 @@ import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
 import net.minecraft.src.buildcraft.zeldo.logic.PipeLogicAdvancedWood;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemTeleport;
+import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsAdvancedInsertion;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsAdvancedWood;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsDistributor;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeLiquidsTeleport;
@@ -76,9 +77,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	//Advanced Insertion
 	public static Item pipeAdvancedInsertion;
 	public static int DEFUALT_Insertion_ID = 4044;
-	public static int DEFUALT_Insertion_TEXTURE = 8*16+6;
-	public static int DEFUALT_Insertion_TEXTURE_CLOSED = 8*16+7;
-	public static String DEFUALT_Insertion_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/AdvancedWood.png";
+	public static int DEFUALT_Insertion_TEXTURE = 8;
 
 	//GUI Packet Ids
 	public static int GUI_ITEM_SEND = 255;
@@ -99,7 +98,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static int PACKET_REQ_LIQUID = 6;
 	public static int PACKET_REQ_POWER = 7;
 	public static int PACKET_GUI_COUNT = 8;
-	
+
 	public static int CurrentGUICount = 0;
 
 
@@ -165,8 +164,9 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		pipeLiquidTeleport = createPipe (mod_zAdditionalPipes.DEFUALT_LIQUID_TELEPORT_ID, PipeLiquidsTeleport.class, "Waterproof Teleport Pipe", BuildCraftTransport.pipeWaterproof, pipeItemTeleport, null, null);
 		pipePowerTeleport = createPipe (mod_zAdditionalPipes.DEFUALT_POWER_TELEPORT_ID, PipePowerTeleport.class, "Power Teleport Pipe", Item.redstone, pipeItemTeleport, null, null);
 		pipeDistributor = createPipe(mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TELEPORT_ID, PipeItemsDistributor.class, "Distribution Transport Pipe", Item.redstone, Item.ingotIron, Block.glass, Item.ingotIron);
-		pipeAdvancedWood = createPipe(mod_zAdditionalPipes.DEFUALT_ADVANCEDWOOD_ID, PipeItemsAdvancedWood.class, "Advanced Wood Transport Pipe", Item.redstone, Block.planks, Block.glass, Block.planks);
-
+		pipeAdvancedWood = createPipe(mod_zAdditionalPipes.DEFUALT_ADVANCEDWOOD_ID, PipeItemsAdvancedWood.class, "Advanced Wooden Transport Pipe", Item.redstone, Block.planks, Block.glass, Block.planks);
+		pipeAdvancedInsertion = createPipe(mod_zAdditionalPipes.DEFUALT_Insertion_ID, PipeItemsAdvancedInsertion.class, "Advanced Insertion Transport Pipe", Item.redstone, Block.stone, Block.glass, Block.stone);
+		
 	}
 	//	public GuiScreen HandleGUI(int inventoryType) 
 	//    {
@@ -181,7 +181,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "1.5";
+		return "1.7";
 	}
 
 	public void HandlePacket(Packet230ModLoader packet, EntityPlayerMP player) {
@@ -208,9 +208,9 @@ public class mod_zAdditionalPipes extends BaseModMp {
 				((PipeItemTeleport)tile.pipe).canReceive = canRec;
 				((PipeItemTeleport)tile.pipe).myFreq = freq;
 				((PipeItemTeleport)tile.pipe).Owner = own;
-				
+
 				MutiPlayerProxy.SendPacket(getCountPacket(((PipeItemTeleport)tile.pipe).getConnectedPipes(true).size()), player);
-				
+
 			}
 		}
 		if (packet.packetType == PACKET_SET_LIQUID) {
@@ -225,9 +225,9 @@ public class mod_zAdditionalPipes extends BaseModMp {
 				((PipeLiquidsTeleport)tile.pipe).canReceive = canRec;
 				((PipeLiquidsTeleport)tile.pipe).myFreq = freq;
 				((PipeLiquidsTeleport)tile.pipe).Owner = own;
-				
+
 				MutiPlayerProxy.SendPacket(getCountPacket(((PipeLiquidsTeleport)tile.pipe).getConnectedPipes(true).size()), player);
-				
+
 			}
 		}
 		if (packet.packetType == PACKET_SET_POWER) {
@@ -242,9 +242,9 @@ public class mod_zAdditionalPipes extends BaseModMp {
 				((PipePowerTeleport)tile.pipe).canReceive = canRec;
 				((PipePowerTeleport)tile.pipe).myFreq = freq;
 				((PipePowerTeleport)tile.pipe).Owner = own;
-				
+
 				MutiPlayerProxy.SendPacket(getCountPacket(((PipePowerTeleport)tile.pipe).getConnectedPipes(true).size()), player);
-				
+
 			}
 		}
 	}
@@ -255,7 +255,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		packet.modId = mod_zAdditionalPipes.instance.getId();
 		packet.packetType = mod_zAdditionalPipes.PACKET_GUI_COUNT;
 		packet.isChunkDataPacket = true;
-		
+
 		packet.dataInt = new int[1];
 		packet.dataInt[0] = Count;
 		return packet;

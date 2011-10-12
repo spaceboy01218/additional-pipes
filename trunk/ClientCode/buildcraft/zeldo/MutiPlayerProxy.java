@@ -1,22 +1,18 @@
 package net.minecraft.src.buildcraft.zeldo;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import javax.imageio.ImageIO;
-
-import net.minecraft.src.BuildCraftCore;
+import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModLoaderMp;
@@ -24,7 +20,6 @@ import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.mod_zAdditionalPipes;
 import net.minecraft.src.mod_zAdditionalPipes.chunkXZ;
 import net.minecraft.src.buildcraft.api.APIProxy;
-import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiAdvancedWoodPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiItemTeleportPipe;
@@ -36,6 +31,8 @@ public class MutiPlayerProxy {
 	public static boolean NeedsLoad = true;
 	public static File WorldDir;
 	public static boolean isServer = false;
+	public static boolean HDSet = false;
+	public static boolean HDFound = false;
 	public static void displayGUIItemTeleport(EntityPlayer entityplayer, TileGenericPipe tilePipe) {
 		if (!APIProxy.isClient(APIProxy.getWorld())) {
 			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiItemTeleportPipe(tilePipe));
@@ -60,40 +57,6 @@ public class MutiPlayerProxy {
 		if (APIProxy.isClient(APIProxy.getWorld())) {
 			//System.out.println("Send Request for pipe");
 			ModLoaderMp.SendPacket(mod_zAdditionalPipes.instance, requestUpdatePacket( x, y, z, mod_zAdditionalPipes.PACKET_REQ_ITEM));
-		}
-	}
-	public static File TextureOverride = new File(CoreProxy.getBuildCraftBase(), "Block_Override.png");
-	public static int AddOverride(BufferedImage fgImage, int x, int y)
-	{
-		checkTextureExists();
-		BufferedImage bgImage;
-		try {
-			bgImage = ImageIO.read(TextureOverride);
-			Graphics2D g = bgImage.createGraphics();
-			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			g.drawImage(fgImage, x, y, null);
-			g.dispose();
-			ImageIO.write(bgImage, "PNG", TextureOverride);
-			BuildCraftCore.customBuildCraftTexture = TextureOverride.getAbsolutePath();
-			System.out.println("TexPath: " + BuildCraftCore.customBuildCraftTexture);
-			MinecraftForgeClient.preloadTexture(BuildCraftCore.customBuildCraftTexture);
-			return 0;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-	public static void checkTextureExists()
-	{
-		System.out.println("TexExis: " + TextureOverride.exists());
-		if (!TextureOverride.exists())
-		{
-			try {
-				System.out.println("CheckTex");
-				ImageIO.write(ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, BuildCraftCore.customBuildCraftTexture), "PNG", TextureOverride);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 	}
 	public static Packet230ModLoader requestUpdatePacket(int x, int y, int z, int PacketID) {
@@ -164,7 +127,7 @@ public class MutiPlayerProxy {
 			List<mod_zAdditionalPipes.chunkXZ> loaded = (List<mod_zAdditionalPipes.chunkXZ>)in.readObject();
 			in.close();
 			mod_zAdditionalPipes.keepLoadedChunks = loaded;
-			System.out.println("Loaded " + loaded.size() + " Forced Chunks");
+			System.out.println("[AdditionalPipes] Loaded " + loaded.size() + " Forced Chunks");
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -196,7 +159,27 @@ public class MutiPlayerProxy {
 	}
 	public static void bindTex()
 	{
-		MinecraftForgeClient.bindTexture(mod_zAdditionalPipes.MASTER_TEXTURE_FILE);
+		checkHdPatch();
+		if (HDFound) {
+			MinecraftForgeClient.unbindTexture();
+			MinecraftForgeClient.bindTexture(mod_zAdditionalPipes.MASTER_TEXTURE_FILE);
+		}
+	}
+	public static void checkHdPatch()
+	{
+		if (HDSet)
+			return;
+
+		Object o = ModLoader.getMinecraftInstance().renderEngine;
+		try {
+			Method m = o.getClass().getMethod("setTileSize", Minecraft.class);
+			HDFound = true;
+			System.out.println("[AdditionalPipes] HD Texture Patch found...");
+		} catch (Exception e) {
+			//e.printStackTrace();
+			System.out.println("[AdditionalPipes] HD Texture Patch not found...");
+		}
+		HDSet = true;
 	}
 
 }
