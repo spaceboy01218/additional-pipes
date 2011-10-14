@@ -13,11 +13,13 @@ import java.util.List;
 
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet230ModLoader;
+import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_zAdditionalPipes;
+import net.minecraft.src.buildcraft.api.ILiquidContainer;
+import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.core.ILiquidContainer;
-import net.minecraft.src.buildcraft.core.TileNetworkData;
+import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.IPipeTransportLiquidsHook;
 import net.minecraft.src.buildcraft.transport.Pipe;
@@ -148,7 +150,7 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 			newPos.orientation = Orientations.values()[o];
 			newPos.moveForwards(1.0);
 
-			if (((PipeTransportLiquids)this.transport).canReceiveLiquid(newPos)) {
+			if (canReceiveLiquid2(newPos)) {
 
 				//For better handling in future
 				//int space = BuildCraftCore.OIL_BUCKET_QUANTITY / 4 - sideToCenter[((Orientations.values()[o]).reverse()).ordinal()] - centerToSide[((Orientations.values()[o]).reverse()).ordinal()] + flowRate;
@@ -158,7 +160,21 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 
 		return result;
 	}
+	public boolean canReceiveLiquid2(Position p) {
+		TileEntity entity = worldObj.getBlockTileEntity((int) p.x, (int) p.y,
+				(int) p.z);
 
+		if (!Utils.checkPipesConnections(worldObj, (int) p.x, (int) p.y,
+				(int) p.z, xCoord, yCoord, zCoord)) {
+			return false;
+		}
+
+		if (entity instanceof IPipeEntry || entity instanceof ILiquidContainer) {
+			return true;
+		}
+
+		return false;
+	}
 	public Position getPosition() {
 		return new Position (xCoord, yCoord, zCoord);
 	}

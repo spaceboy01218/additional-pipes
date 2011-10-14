@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.server.MinecraftServer;
@@ -107,8 +108,9 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public int mpOilGuiId = -113;
 	public int mpItemGuiId = -114;
 	public static mod_zAdditionalPipes instance;
-	public boolean isInGame = false;
-	public boolean lagFix = false;
+	public static boolean isInGame = false;
+	public static boolean lagFix = false;
+	public static boolean wrenchOpensGui = false;
 
 
 	//ChunkLoader Variables
@@ -116,6 +118,8 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public long lastCheckTime = 0;
 	public static List<chunkXZ> keepLoadedChunks = new ArrayList<chunkXZ>();
 
+	public static List<Integer> pipeIds = new LinkedList<Integer>();
+	
 	public mod_zAdditionalPipes() {
 		ModLoader.SetInGameHook(this, true, true);
 	}
@@ -152,6 +156,8 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		config.load();
 
 		lagFix = Boolean.parseBoolean(config.getOrCreateBooleanProperty("saveLagFix", Configuration.GENERAL_PROPERTY, false).value);
+		wrenchOpensGui = Boolean.parseBoolean(config.getOrCreateBooleanProperty("wrenchOpensGui", Configuration.GENERAL_PROPERTY, false).value);
+		
 		config.save();
 
 
@@ -181,7 +187,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "1.7";
+		return "1.9";
 	}
 
 	public void HandlePacket(Packet230ModLoader packet, EntityPlayerMP player) {
@@ -381,5 +387,39 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		}
 
 		return res;
+	}
+	
+	public static void RegisterPipeIds()
+	{
+		pipeIds.add(BuildCraftTransport.pipeItemsCobblestone.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeItemsDiamond.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeItemsGold.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeItemsIron.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeItemsObsidian.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeItemsStone.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeItemsWood.shiftedIndex);
+
+		pipeIds.add(BuildCraftTransport.pipeLiquidsCobblestone.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeLiquidsGold.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeLiquidsIron.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeLiquidsStone.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeLiquidsWood.shiftedIndex);
+
+		pipeIds.add(BuildCraftTransport.pipePowerGold.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipePowerStone.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipePowerWood.shiftedIndex);
+
+		pipeIds.add(mod_zAdditionalPipes.pipeAdvancedInsertion.shiftedIndex);
+		pipeIds.add(mod_zAdditionalPipes.pipeAdvancedWood.shiftedIndex);
+		pipeIds.add(mod_zAdditionalPipes.pipeDistributor.shiftedIndex);
+		pipeIds.add(mod_zAdditionalPipes.pipeItemTeleport.shiftedIndex);
+		pipeIds.add(mod_zAdditionalPipes.pipeLiquidTeleport.shiftedIndex);
+		pipeIds.add(mod_zAdditionalPipes.pipePowerTeleport.shiftedIndex);
+	}
+	public static boolean ItemIsPipe(int ItemID)
+	{
+		if (pipeIds.contains(ItemID))
+			return true;
+		return false;
 	}
 }

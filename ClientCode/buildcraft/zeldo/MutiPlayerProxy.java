@@ -6,13 +6,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.ModLoaderMp;
@@ -33,6 +33,7 @@ public class MutiPlayerProxy {
 	public static boolean isServer = false;
 	public static boolean HDSet = false;
 	public static boolean HDFound = false;
+	public static boolean OFFound = false;
 	public static void displayGUIItemTeleport(EntityPlayer entityplayer, TileGenericPipe tilePipe) {
 		if (!APIProxy.isClient(APIProxy.getWorld())) {
 			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiItemTeleportPipe(tilePipe));
@@ -172,12 +173,21 @@ public class MutiPlayerProxy {
 
 		Object o = ModLoader.getMinecraftInstance().renderEngine;
 		try {
-			Method m = o.getClass().getMethod("setTileSize", Minecraft.class);
+			o.getClass().getMethod("setTileSize", Minecraft.class);
 			HDFound = true;
 			System.out.println("[AdditionalPipes] HD Texture Patch found...");
 		} catch (Exception e) {
 			//e.printStackTrace();
 			System.out.println("[AdditionalPipes] HD Texture Patch not found...");
+		}
+		try {
+			o.getClass().getMethod("checkHdTextures");
+			OFFound = true;
+			System.out.println("[AdditionalPipes] OptiFine found... Forced to override the base texture...");
+			BuildCraftCore.customBuildCraftTexture = mod_zAdditionalPipes.MASTER_OVERRIDE_FILE;
+		} catch (Exception e) {
+			//e.printStackTrace();
+			System.out.println("[AdditionalPipes] OptiFine not found...");
 		}
 		HDSet = true;
 	}

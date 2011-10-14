@@ -17,9 +17,10 @@ import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
+import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.StackUtil;
-import net.minecraft.src.buildcraft.core.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.energy.TileEngine;
 import net.minecraft.src.buildcraft.transport.IPipeTransportItemsHook;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
@@ -89,9 +90,12 @@ public class PipeItemsDistributor extends Pipe implements IPipeTransportItemsHoo
 
 		if (entity instanceof IPipeEntry) {
 			return true;
-		} else if (entity instanceof TileGenericPipe) {
+		} else if (entity instanceof TileEngine)
+		{
+			return false;
+		}
+		else if (entity instanceof TileGenericPipe) {
 			TileGenericPipe pipe = (TileGenericPipe) entity;
-
 			return pipe.pipe.transport instanceof PipeTransportItems;
 		} else if (entity instanceof IInventory) {
 			if (new StackUtil(item.item).checkAvailableSlot((IInventory) entity,
