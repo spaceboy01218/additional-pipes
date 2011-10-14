@@ -18,7 +18,7 @@ import net.minecraft.src.mod_zAdditionalPipes;
 import net.minecraft.src.buildcraft.api.IPowerReceptor;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
-import net.minecraft.src.buildcraft.core.TileNetworkData;
+import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
 import net.minecraft.src.buildcraft.transport.IPipeTransportPowerHook;
 import net.minecraft.src.buildcraft.transport.Pipe;

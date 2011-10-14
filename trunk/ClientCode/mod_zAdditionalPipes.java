@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -48,6 +49,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	public static int MASTER_TEXTURE_OFFSET = 8 * 16;
 	public static String MASTER_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/block_textures.png";
+	public static String MASTER_OVERRIDE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/block_textures_override.png";
 
 	//Item Teleport
 	public static Item pipeItemTeleport;
@@ -116,14 +118,17 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	private static Configuration config;
 	public static mod_zAdditionalPipes instance;
-	public boolean isInGame = false;
-	public boolean lagFix = false;
+	public static boolean isInGame = false;
+	public static boolean lagFix = false;
+	public static boolean wrenchOpensGui = false;
 
 
 	//ChunkLoader Variables
 	public int chunkTestTime = 500;
 	public long lastCheckTime = 0;
 	public static List<chunkXZ> keepLoadedChunks = new ArrayList<chunkXZ>();
+
+	public static List<Integer> pipeIds = new LinkedList<Integer>();
 
 	public mod_zAdditionalPipes() {
 		ModLoader.SetInGameHook(this, true, true);
@@ -192,10 +197,12 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		config.load();
 
 		lagFix = Boolean.parseBoolean(config.getOrCreateBooleanProperty("saveLagFix", Configuration.GENERAL_PROPERTY, false).value);
+		wrenchOpensGui = Boolean.parseBoolean(config.getOrCreateBooleanProperty("wrenchOpensGui", Configuration.GENERAL_PROPERTY, false).value);
 		config.save();
 
 		AddImageOverride();
 		MinecraftForgeClient.preloadTexture(mod_zAdditionalPipes.MASTER_TEXTURE_FILE);
+		MinecraftForgeClient.preloadTexture(mod_zAdditionalPipes.MASTER_OVERRIDE_FILE);
 
 		pipeItemTeleport = createPipe (mod_zAdditionalPipes.DEFUALT_ITEM_TELEPORT_ID, PipeItemTeleport.class, "Item Teleport Pipe", BuildCraftCore.diamondGearItem, Block.glass, BuildCraftCore.diamondGearItem, null);
 		pipeLiquidTeleport = createPipe (mod_zAdditionalPipes.DEFUALT_LIQUID_TELEPORT_ID, PipeLiquidsTeleport.class, "Waterproof Teleport Pipe", BuildCraftTransport.pipeWaterproof, pipeItemTeleport, null, null);
@@ -211,11 +218,11 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		MinecraftForgeClient.registerCustomItemRenderer(pipeAdvancedWood.shiftedIndex, mod_BuildCraftTransport.instance);
 		MinecraftForgeClient.registerCustomItemRenderer(pipeAdvancedInsertion.shiftedIndex, mod_BuildCraftTransport.instance);
 
-
+		RegisterPipeIds();
 
 	}
 	@SuppressWarnings("rawtypes")
-	public void AddImageOverride()
+	public static void AddImageOverride()
 	{
 		try {
 			HashMap textures = new HashMap();
@@ -282,7 +289,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "1.7";
+		return "1.9";
 	}
 	@Override
 	public void HandlePacket(Packet230ModLoader packet) {
@@ -388,5 +395,38 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		}
 
 		return res;
+	}
+	public static void RegisterPipeIds()
+	{
+		pipeIds.add(BuildCraftTransport.pipeItemsCobblestone.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeItemsDiamond.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeItemsGold.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeItemsIron.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeItemsObsidian.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeItemsStone.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeItemsWood.shiftedIndex);
+
+		pipeIds.add(BuildCraftTransport.pipeLiquidsCobblestone.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeLiquidsGold.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeLiquidsIron.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeLiquidsStone.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipeLiquidsWood.shiftedIndex);
+
+		pipeIds.add(BuildCraftTransport.pipePowerGold.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipePowerStone.shiftedIndex);
+		pipeIds.add(BuildCraftTransport.pipePowerWood.shiftedIndex);
+
+		pipeIds.add(mod_zAdditionalPipes.pipeAdvancedInsertion.shiftedIndex);
+		pipeIds.add(mod_zAdditionalPipes.pipeAdvancedWood.shiftedIndex);
+		pipeIds.add(mod_zAdditionalPipes.pipeDistributor.shiftedIndex);
+		pipeIds.add(mod_zAdditionalPipes.pipeItemTeleport.shiftedIndex);
+		pipeIds.add(mod_zAdditionalPipes.pipeLiquidTeleport.shiftedIndex);
+		pipeIds.add(mod_zAdditionalPipes.pipePowerTeleport.shiftedIndex);
+	}
+	public static boolean ItemIsPipe(int ItemID)
+	{
+		if (pipeIds.contains(ItemID))
+			return true;
+		return false;
 	}
 }

@@ -9,10 +9,13 @@
 package net.minecraft.src.buildcraft.zeldo.pipes;
 
 import java.util.LinkedList;
+import java.util.Random;
 
+import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_zAdditionalPipes;
+import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
@@ -51,6 +54,8 @@ public class PipeItemsAdvancedInsertion extends Pipe implements IPipeTransportIt
 	@Override
 	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos, EntityPassiveItem item) {
 		LinkedList<Orientations> newOris = new LinkedList<Orientations>();
+		LinkedList<Orientations> nullReturn = new LinkedList<Orientations>();
+		nullReturn.add(Orientations.values()[0]);
 		for (int o = 0; o < 6; ++o) {
 			if (Orientations.values()[o] != pos.orientation.reverse()) {
 				Position newPos = new Position(pos);
@@ -65,10 +70,27 @@ public class PipeItemsAdvancedInsertion extends Pipe implements IPipeTransportIt
 				}
 			}
 		}
+
+
+
 		if (newOris.size() > 0)
 		{
-			item.speed = 1F;
-			return newOris;
+			((PipeTransportItems) this.transport).scheduleRemoval(item);
+			Position destPos =  new Position(pos.x, pos.y, pos.z, newOris.get( (new Random()) .nextInt(newOris.size()) ) );
+			destPos.moveForwards(1.0);
+			StackUtil utils = new StackUtil(item.item);
+			TileEntity tile = worldObj.getBlockTileEntity((int) destPos.x, (int) destPos.y, (int) destPos.z);
+			if (!APIProxy.isClient(worldObj)) {
+				if (utils.checkAvailableSlot((IInventory) tile, true, destPos.orientation.reverse()) && utils.items.stackSize == 0) {
+					item.remove();
+				} else {
+					item.item = utils.items;
+					EntityItem dropped = item.toEntityItem(destPos.orientation);
+				}
+			}
+
+			System.out.println("Insertion Output 2 : " + destPos.orientation);
+			return nullReturn;
 		}
 		return possibleOrientations;
 	}
