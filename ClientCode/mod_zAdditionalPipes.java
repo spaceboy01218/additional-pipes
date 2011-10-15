@@ -110,6 +110,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static int PACKET_REQ_LIQUID = 6;
 	public static int PACKET_REQ_POWER = 7;
 	public static int PACKET_GUI_COUNT = 8;
+	public static int PACKET_OPEN_GUI = 9;
 
 	public static int CurrentGUICount = 0;
 
@@ -348,6 +349,24 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		}
 		if (packet.packetType == PACKET_GUI_COUNT) {
 			CurrentGUICount = packet.dataInt[0];
+		}
+		if (packet.packetType == PACKET_OPEN_GUI) {
+			int x = packet.dataInt [0];
+			int y = packet.dataInt [1];
+			int z = packet.dataInt [2];
+			TileGenericPipe tilePipe = (TileGenericPipe) APIProxy.getWorld().getBlockTileEntity(x, y, z);
+			switch (packet.dataInt[3])
+			{
+			case 0:
+				ModLoader.getMinecraftInstance().displayGuiScreen(new GuiItemTeleportPipe(tilePipe));
+				break;
+			case 1:
+				ModLoader.getMinecraftInstance().displayGuiScreen(new GuiLiquidTeleportPipe(tilePipe));
+				break;
+			case 2:
+				ModLoader.getMinecraftInstance().displayGuiScreen(new GuiPowerTeleportPipe(tilePipe));
+				break;
+			}
 		}
 	}
 	public static boolean intToBool(int a) {
