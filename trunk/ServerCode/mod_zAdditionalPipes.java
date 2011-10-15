@@ -99,7 +99,8 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static int PACKET_REQ_LIQUID = 6;
 	public static int PACKET_REQ_POWER = 7;
 	public static int PACKET_GUI_COUNT = 8;
-
+	public static int PACKET_OPEN_GUI = 9;
+	
 	public static int CurrentGUICount = 0;
 
 

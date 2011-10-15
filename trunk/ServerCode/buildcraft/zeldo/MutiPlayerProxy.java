@@ -33,21 +33,42 @@ public class MutiPlayerProxy {
 	public static void displayGUIItemTeleport(EntityPlayer entityplayer, TileGenericPipe tilePipe) {
 		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, ((PipeItemTeleport)tilePipe.pipe).getDescPipe());
 		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, mod_zAdditionalPipes.getCountPacket(((PipeItemTeleport)tilePipe.pipe).getConnectedPipes(true).size()));
-		ModLoader.OpenGUI(entityplayer, mod_zAdditionalPipes.GUI_ITEM_SEND, entityplayer.inventory, new ContainerTeleportPipe());
+		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, OpenGUI(0, tilePipe.xCoord, tilePipe.yCoord, tilePipe.zCoord));
+		//ModLoader.OpenGUI(entityplayer, mod_zAdditionalPipes.GUI_ITEM_SEND, tilePipe, new ContainerTeleportPipe());
 	}
 	public static void displayGUILiquidTeleport(EntityPlayer entityplayer,TileGenericPipe tilePipe) {
 		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, ((PipeLiquidsTeleport)tilePipe.pipe).getDescPipe());
 		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, mod_zAdditionalPipes.getCountPacket(((PipeLiquidsTeleport)tilePipe.pipe).getConnectedPipes(true).size()));
-		ModLoader.OpenGUI(entityplayer, mod_zAdditionalPipes.GUI_LIQUID_SEND, entityplayer.inventory, new ContainerTeleportPipe());
+		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, OpenGUI(1, tilePipe.xCoord, tilePipe.yCoord, tilePipe.zCoord));
+		//ModLoader.OpenGUI(entityplayer, mod_zAdditionalPipes.GUI_LIQUID_SEND, tilePipe, new ContainerTeleportPipe());
 	}
 	public static void displayGUIPowerTeleport(EntityPlayer entityplayer, TileGenericPipe tilePipe) {
 		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, ((PipePowerTeleport)tilePipe.pipe).getDescPipe());
 		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, mod_zAdditionalPipes.getCountPacket(((PipePowerTeleport)tilePipe.pipe).getConnectedPipes(true).size()));
-		ModLoader.OpenGUI(entityplayer, mod_zAdditionalPipes.GUI_ENERGY_SEND, entityplayer.inventory, new ContainerTeleportPipe());
+		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, OpenGUI(2, tilePipe.xCoord, tilePipe.yCoord, tilePipe.zCoord));
+		//ModLoader.OpenGUI(entityplayer, mod_zAdditionalPipes.GUI_ENERGY_SEND, tilePipe, new ContainerTeleportPipe());
 	}
 	public static void displayGUIAdvancedWood(EntityPlayer entityplayer, TileGenericPipe tilePipe) {
 		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, ((PipeItemsAdvancedWood)tilePipe.pipe).getDescPacket());
 		ModLoader.OpenGUI(entityplayer, mod_zAdditionalPipes.GUI_ADVANCEDWOOD_SEND, tilePipe, new CraftingAdvancedWoodPipe(entityplayer.inventory, tilePipe));
+	}
+	public static Packet230ModLoader OpenGUI(int Type, int x, int y, int z)
+	{
+		Packet230ModLoader packet = new Packet230ModLoader();
+
+		packet.modId = mod_zAdditionalPipes.instance.getId();
+		packet.packetType = mod_zAdditionalPipes.PACKET_OPEN_GUI;
+		packet.isChunkDataPacket = true;
+
+		packet.dataInt = new int [4];
+
+		packet.dataInt [0] = x;
+		packet.dataInt [1] = y;
+		packet.dataInt [2] = z;
+		packet.dataInt [3] = Type;
+
+		return packet;
+
 	}
 	public static void requestItemTeleport(int x, int y, int z) {}
 	public static boolean isOnServer()
@@ -65,45 +86,45 @@ public class MutiPlayerProxy {
 				//System.out.println("Didn't need to add PermChunk @ " + x + "," + z);
 				return;
 			}
-				
+
 		}
 		mod_zAdditionalPipes.keepLoadedChunks.add(new mod_zAdditionalPipes.chunkXZ(x, z));
-		 //System.out.println("Added PermChunk @ " + x + "," + z);
-		 SaveChunkData();
+		//System.out.println("Added PermChunk @ " + x + "," + z);
+		SaveChunkData();
 	}
 	public static void SaveChunkData() {
 		try {
-			
+
 			//System.out.println("Saving ChunkLoader data...");
-	        FileOutputStream fos = new FileOutputStream(getChunkSaveFile().getAbsolutePath());
-	        GZIPOutputStream gzos = new GZIPOutputStream(fos);
-	        ObjectOutputStream out = new ObjectOutputStream(gzos);
-	        out.writeObject(mod_zAdditionalPipes.keepLoadedChunks);
-	        out.flush();
-	        out.close();
-	        //System.out.println("Saved ChunkLoader data...");
-	     }
-	     catch (IOException e) {
-	    	 e.printStackTrace(); 
-	     }
+			FileOutputStream fos = new FileOutputStream(getChunkSaveFile().getAbsolutePath());
+			GZIPOutputStream gzos = new GZIPOutputStream(fos);
+			ObjectOutputStream out = new ObjectOutputStream(gzos);
+			out.writeObject(mod_zAdditionalPipes.keepLoadedChunks);
+			out.flush();
+			out.close();
+			//System.out.println("Saved ChunkLoader data...");
+		}
+		catch (IOException e) {
+			e.printStackTrace(); 
+		}
 	}
 	@SuppressWarnings("unchecked")
 	public static void LoadChunkData() {
 		if (!NeedsLoad)
 			return;
 		NeedsLoad = false;
-		 try {
-		        FileInputStream fis = new FileInputStream(getChunkSaveFile().getAbsolutePath());
-		        GZIPInputStream gzis = new GZIPInputStream(fis);
-		        ObjectInputStream in = new ObjectInputStream(gzis);
-		        List<mod_zAdditionalPipes.chunkXZ> loaded = (List<mod_zAdditionalPipes.chunkXZ>)in.readObject();
-		        in.close();
-		        mod_zAdditionalPipes.keepLoadedChunks = loaded;
-		        System.out.println("Loaded " + loaded.size() + " Forced Chunks");
-		      }
-		      catch (Exception e) {
-		          e.printStackTrace();
-		      }
+		try {
+			FileInputStream fis = new FileInputStream(getChunkSaveFile().getAbsolutePath());
+			GZIPInputStream gzis = new GZIPInputStream(fis);
+			ObjectInputStream in = new ObjectInputStream(gzis);
+			List<mod_zAdditionalPipes.chunkXZ> loaded = (List<mod_zAdditionalPipes.chunkXZ>)in.readObject();
+			in.close();
+			mod_zAdditionalPipes.keepLoadedChunks = loaded;
+			System.out.println("Loaded " + loaded.size() + " Forced Chunks");
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	public static void DeleteChunkFromList(int x, int z) {
 		MutiPlayerProxy.LoadChunkData();
@@ -118,7 +139,7 @@ public class MutiPlayerProxy {
 				SaveChunkData();
 				return;
 			}
-				
+
 		}
 	}
 	public static File getChunkSaveFile() {
