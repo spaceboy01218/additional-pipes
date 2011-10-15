@@ -23,6 +23,7 @@ import net.minecraft.src.buildcraft.zeldo.gui.ContainerTeleportPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.CraftingAdvancedWoodPipe;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemTeleport;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsAdvancedWood;
+import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsDistributor;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeLiquidsTeleport;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipePowerTeleport;
 
@@ -46,6 +47,12 @@ public class MutiPlayerProxy {
 		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, ((PipePowerTeleport)tilePipe.pipe).getDescPipe());
 		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, mod_zAdditionalPipes.getCountPacket(((PipePowerTeleport)tilePipe.pipe).getConnectedPipes(true).size()));
 		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, OpenGUI(2, tilePipe.xCoord, tilePipe.yCoord, tilePipe.zCoord));
+		//ModLoader.OpenGUI(entityplayer, mod_zAdditionalPipes.GUI_ENERGY_SEND, tilePipe, new ContainerTeleportPipe());
+	}
+	public static void displayGUIDistribution(EntityPlayer entityplayer, TileGenericPipe tilePipe) {
+		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, ((PipeItemsDistributor)tilePipe.pipe).getDescPipe());
+		//ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, mod_zAdditionalPipes.getCountPacket(((PipePowerTeleport)tilePipe.pipe).getConnectedPipes(true).size()));
+		ModLoaderMp.SendPacketTo(mod_zAdditionalPipes.instance, (EntityPlayerMP)entityplayer, OpenGUI(3, tilePipe.xCoord, tilePipe.yCoord, tilePipe.zCoord));
 		//ModLoader.OpenGUI(entityplayer, mod_zAdditionalPipes.GUI_ENERGY_SEND, tilePipe, new ContainerTeleportPipe());
 	}
 	public static void displayGUIAdvancedWood(EntityPlayer entityplayer, TileGenericPipe tilePipe) {
@@ -120,7 +127,7 @@ public class MutiPlayerProxy {
 			List<mod_zAdditionalPipes.chunkXZ> loaded = (List<mod_zAdditionalPipes.chunkXZ>)in.readObject();
 			in.close();
 			mod_zAdditionalPipes.keepLoadedChunks = loaded;
-			System.out.println("Loaded " + loaded.size() + " Forced Chunks");
+			ModLoader.getMinecraftServerInstance().log("[AdditionalPipes] Loaded " + loaded.size() + " Forced Chunks");
 		}
 		catch (Exception e) {
 			e.printStackTrace();

@@ -11,6 +11,8 @@ package net.minecraft.src.buildcraft.zeldo.pipes;
 import java.util.LinkedList;
 
 import net.minecraft.src.IInventory;
+import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.Packet230ModLoader;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_zAdditionalPipes;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
@@ -31,8 +33,10 @@ import net.minecraft.src.buildcraft.zeldo.logic.PipeLogicDistributor;
 public class PipeItemsDistributor extends Pipe implements IPipeTransportItemsHook {
 
 	private int baseTexture = mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE;
-	private int plainTexture = mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED;
+	//private int plainTexture = mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED;
 	private @TileNetworkData int nextTexture = baseTexture;
+	public @TileNetworkData int distData[] = {1,1,1,1,1,1};
+	public @TileNetworkData int curTick = 0;
 
 	public PipeItemsDistributor(int itemID) {
 		super(new PipeTransportItems(), new PipeLogicDistributor(), itemID);
@@ -40,17 +44,23 @@ public class PipeItemsDistributor extends Pipe implements IPipeTransportItemsHoo
 
 	@Override
 	public void prepareTextureFor(Orientations connection) {
+		//		if (connection == Orientations.Unknown) {
+		//			nextTexture = baseTexture;
+		//		} else {
+		//			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		//
+		//			if (metadata == connection.ordinal()) {
+		//				nextTexture = baseTexture;
+		//			} else {
+		//				nextTexture = plainTexture;
+		//			}
+		//		}
 		if (connection == Orientations.Unknown) {
-			nextTexture = baseTexture;
+			nextTexture = mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE;
 		} else {
-			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-			if (metadata == connection.ordinal()) {
-				nextTexture = baseTexture;
-			} else {
-				nextTexture = plainTexture;
-			}
+			nextTexture = mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_0 + connection.ordinal();
 		}
+
 	}
 
 	@Override
@@ -73,7 +83,14 @@ public class PipeItemsDistributor extends Pipe implements IPipeTransportItemsHoo
 				}
 			}
 		}
-		((PipeLogicDistributor)this.logic).switchPosition();
+		curTick++;
+		if (curTick >= distData[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)])
+		{
+			((PipeLogicDistributor)this.logic).switchPosition();
+			curTick = 0;
+		}
+
+
 		worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
 		return result;
 	}
@@ -113,6 +130,53 @@ public class PipeItemsDistributor extends Pipe implements IPipeTransportItemsHoo
 
 	@Override
 	public void readjustSpeed(EntityPassiveItem item) {
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
+		nbttagcompound.setInteger("curTick", curTick);
+		for (int i=0; i<distData.length; i++)
+			nbttagcompound.setInteger("Dist" + i, distData[i]);
+
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
+		curTick = nbttagcompound.getInteger("curTick");
+		for (int i=0; i<distData.length; i++)
+			distData[i] = nbttagcompound.getInteger("Dist" + i);
+
+		boolean found = false;
+
+		for (int i=0; i<distData.length; i++)
+			if (distData[i] > 0)
+				found=true;
+
+		if (!found)
+			for (int i=0; i<distData.length; i++)
+				distData[i] = 1;
+
+	}
+	public Packet230ModLoader getDescPipe() {
+		Packet230ModLoader packet = new Packet230ModLoader();
+
+		packet.modId = mod_zAdditionalPipes.instance.getId();
+		packet.packetType = mod_zAdditionalPipes.PACKET_SET_DIST;
+		packet.isChunkDataPacket = true;
+
+		packet.dataInt = new int [9];
+
+		packet.dataInt [0] = xCoord;
+		packet.dataInt [1] = yCoord;
+		packet.dataInt [2] = zCoord;
+		for (int i=0; i<distData.length; i++)
+		{
+			packet.dataInt [3+i] = distData[i];
+		}
+
+		return packet;
 	}
 
 }
