@@ -22,6 +22,7 @@ import net.minecraft.src.mod_zAdditionalPipes.chunkXZ;
 import net.minecraft.src.buildcraft.api.APIProxy;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiAdvancedWoodPipe;
+import net.minecraft.src.buildcraft.zeldo.gui.GuiDistributionPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiItemTeleportPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiLiquidTeleportPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiPowerTeleportPipe;
@@ -52,6 +53,11 @@ public class MutiPlayerProxy {
 	public static void displayGUIAdvancedWood(EntityPlayer entityplayer, TileGenericPipe container) {
 		if (!APIProxy.isClient(APIProxy.getWorld())) {
 			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiAdvancedWoodPipe(entityplayer.inventory, container, container));
+		}
+	}
+	public static void displayGUIDistribution(EntityPlayer entityplayer, TileGenericPipe container) {
+		if (!APIProxy.isClient(APIProxy.getWorld())) {
+			ModLoader.getMinecraftInstance().displayGuiScreen(new GuiDistributionPipe(container));
 		}
 	}
 	public static void requestItemTeleport(int x, int y, int z) {

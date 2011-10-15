@@ -64,6 +64,8 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static int DEFUALT_DISTRIBUTOR_TELEPORT_ID = 4046;
 	public static int DEFUALT_DISTRIBUTOR_TEXTURE = 8*16+4;
 	public static int DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED = 8*16+5;
+	public static int DEFUALT_DISTRIBUTOR_TEXTURE_0 = 8*16+9;
+	public static String DEFUALT_DISTRIBUTOR_TEXTURE_FILE_BASE = "/net/minecraft/src/buildcraft/zeldo/gui/Dist";
 	public static String DEFUALT_DISTRIBUTOR_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/DistributionOpen.png";
 	public static String DEFUALT_DISTRIBUTOR_TEXTURE_FILE_CLOSED = "/net/minecraft/src/buildcraft/zeldo/gui/DistributionClosed.png";
 
@@ -100,6 +102,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static int PACKET_REQ_POWER = 7;
 	public static int PACKET_GUI_COUNT = 8;
 	public static int PACKET_OPEN_GUI = 9;
+	public static int PACKET_SET_DIST = 10;
 	
 	public static int CurrentGUICount = 0;
 
@@ -252,6 +255,19 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 				MutiPlayerProxy.SendPacket(getCountPacket(((PipePowerTeleport)tile.pipe).getConnectedPipes(true).size()), player);
 
+			}
+		}
+		if (packet.packetType == PACKET_SET_DIST) {
+			int x = packet.dataInt [0];
+			int y = packet.dataInt [1];
+			int z = packet.dataInt [2];
+			if (APIProxy.getWorld().blockExists(x, y, z)) {
+				TileGenericPipe tile = (TileGenericPipe) APIProxy.getWorld().getBlockTileEntity(x, y, z);
+				PipeItemsDistributor a = (PipeItemsDistributor) tile.pipe;
+				for (int i=0; i<a.distData.length; i++)
+				{
+					a.distData[i] = packet.dataInt[3+i];
+				}
 			}
 		}
 	}

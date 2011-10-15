@@ -12,6 +12,7 @@ import net.minecraft.src.BuildCraftCore;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.mod_zAdditionalPipes;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
 import net.minecraft.src.buildcraft.api.Orientations;
@@ -19,6 +20,8 @@ import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.transport.PipeLogic;
 import net.minecraft.src.buildcraft.transport.PipeLogicWood;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
+import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
+import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsDistributor;
 
 public class PipeLogicDistributor extends PipeLogic {
 
@@ -34,12 +37,10 @@ public class PipeLogicDistributor extends PipeLogic {
 				nextMetadata = 0;
 			}
 
-			Position pos = new Position(xCoord, yCoord, zCoord,
-					Orientations.values()[nextMetadata]);
+			Position pos = new Position(xCoord, yCoord, zCoord, Orientations.values()[nextMetadata]);
 			pos.moveForwards(1.0);
 
-			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x,
-					(int) pos.y, (int) pos.z);
+			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
 			if (tile instanceof TileGenericPipe) {
 				if (((TileGenericPipe) tile).pipe.logic instanceof PipeLogicWood || ((TileGenericPipe) tile).pipe.logic instanceof PipeLogicAdvancedWood) {
@@ -47,13 +48,11 @@ public class PipeLogicDistributor extends PipeLogic {
 				}
 			}
 
-			if (tile instanceof IPipeEntry
-					|| tile instanceof IInventory
-					|| tile instanceof ILiquidContainer
-					|| tile instanceof TileGenericPipe) {
-
-				worldObj.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
-				return;
+			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof ILiquidContainer || tile instanceof TileGenericPipe) {
+				if (((PipeItemsDistributor)this.container.pipe).distData[nextMetadata] > 0) {
+					worldObj.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
+					return;
+				}
 			}
 		}
 	}
@@ -81,7 +80,13 @@ public class PipeLogicDistributor extends PipeLogic {
 			return true;
 		}
 
-		return false;
+		if (entityplayer.getCurrentEquippedItem() != null && mod_zAdditionalPipes.ItemIsPipe(entityplayer.getCurrentEquippedItem().getItem().shiftedIndex))  {
+			return false;
+		}
+
+		MutiPlayerProxy.displayGUIDistribution(entityplayer, this.container);
+
+		return true;
 	}
 
 	@Override
