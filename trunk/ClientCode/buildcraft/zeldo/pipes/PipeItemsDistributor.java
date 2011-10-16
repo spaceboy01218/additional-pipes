@@ -71,7 +71,11 @@ public class PipeItemsDistributor extends Pipe implements IPipeTransportItemsHoo
 
 	@Override
 	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos,EntityPassiveItem item) {
+
+		((PipeLogicDistributor)this.logic).switchIfNeeded();
+
 		LinkedList<Orientations> result = new LinkedList<Orientations>();
+
 		for (int o = 0; o < 6; ++o) {
 			if (container.pipe.outputOpen(Orientations.values()[o])) {
 				Position newPos = new Position(pos);

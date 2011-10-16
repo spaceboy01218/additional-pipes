@@ -56,6 +56,37 @@ public class PipeLogicDistributor extends PipeLogic {
 			}
 		}
 	}
+	public void switchIfNeeded()
+	{
+		int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+
+		int nextMetadata = metadata;
+
+		for (int l = 0; l < 6; ++l) {
+			if (nextMetadata > 5) {
+				nextMetadata = 0;
+			}
+
+			Position pos = new Position(xCoord, yCoord, zCoord, Orientations.values()[nextMetadata]);
+			pos.moveForwards(1.0);
+
+			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+
+			if (tile instanceof TileGenericPipe) {
+				if (((TileGenericPipe) tile).pipe.logic instanceof PipeLogicWood || ((TileGenericPipe) tile).pipe.logic instanceof PipeLogicAdvancedWood) {
+					continue;
+				}
+			}
+
+			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof ILiquidContainer || tile instanceof TileGenericPipe) {
+				if (((PipeItemsDistributor)this.container.pipe).distData[nextMetadata] > 0) {
+					worldObj.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
+					return;
+				}
+			}
+			nextMetadata ++;
+		}
+	}
 
 
 	@Override
