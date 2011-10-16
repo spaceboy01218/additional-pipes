@@ -191,7 +191,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "1.9";
+		return "2.0Dev1";
 	}
 
 	public void HandlePacket(Packet230ModLoader packet, EntityPlayerMP player) {

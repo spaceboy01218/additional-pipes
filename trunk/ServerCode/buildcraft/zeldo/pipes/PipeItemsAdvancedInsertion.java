@@ -11,7 +11,6 @@ package net.minecraft.src.buildcraft.zeldo.pipes;
 import java.util.LinkedList;
 import java.util.Random;
 
-import net.minecraft.src.EntityItem;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.mod_zAdditionalPipes;
@@ -72,10 +71,9 @@ public class PipeItemsAdvancedInsertion extends Pipe implements IPipeTransportIt
 		}
 
 
-
+		//System.out.println("NewOris Size: " + newOris.size());
 		if (newOris.size() > 0)
 		{
-			((PipeTransportItems) this.transport).scheduleRemoval(item);
 			Position destPos =  new Position(pos.x, pos.y, pos.z, newOris.get( (new Random()) .nextInt(newOris.size()) ) );
 			destPos.moveForwards(1.0);
 			StackUtil utils = new StackUtil(item.item);
@@ -83,9 +81,11 @@ public class PipeItemsAdvancedInsertion extends Pipe implements IPipeTransportIt
 			if (!APIProxy.isClient(worldObj)) {
 				if (utils.checkAvailableSlot((IInventory) tile, true, destPos.orientation.reverse()) && utils.items.stackSize == 0) {
 					item.remove();
+					((PipeTransportItems) this.transport).scheduleRemoval(item);
 				} else {
 					item.item = utils.items;
-					EntityItem dropped = item.toEntityItem(destPos.orientation);
+					return this.filterPossibleMovements(possibleOrientations, pos, item);
+					//EntityItem dropped = item.toEntityItem(destPos.orientation);
 				}
 			}
 
