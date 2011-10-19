@@ -84,8 +84,12 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static int DEFUALT_Insertion_TEXTURE = 8;
 	
 	//Redstone
-		public static Item pipeRedStone;
-		public static int DEFUALT_RedStone_ID = 4043;
+	public static Item pipeRedStone;
+	public static int DEFUALT_RedStone_ID = 4043;
+	public static int DEFUALT_RedStone_TEXTURE = 8*16+4;
+	public static int DEFUALT_RedStone_TEXTURE_POWERED = 8*16+5;
+	public static String DEFUALT_RedStone_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/RS.png";
+	public static String DEFUALT_RedStone_FILE_POWERED = "/net/minecraft/src/buildcraft/zeldo/gui/RSP.png";
 
 	//GUI Packet Ids
 	public static int GUI_ITEM_SEND = 255;

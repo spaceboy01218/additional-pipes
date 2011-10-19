@@ -86,7 +86,7 @@ public class PipeItemsRedstone extends Pipe implements IPipeTransportItemsHook, 
 
 	@Override
 	public boolean isPoweringTo(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		System.out.println("RedStoneIsPoweringTo");
+		//System.out.println("RedStoneIsPoweringTo");
 		if (((PipeTransportItems)this.transport).travelingEntities.size() == 0)
 		{
 			isPowering = false;
