@@ -223,7 +223,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "2.0Dev2";
+		return "2.0Dev3";
 	}
 
 	public void HandlePacket(Packet230ModLoader packet, EntityPlayerMP player) {
