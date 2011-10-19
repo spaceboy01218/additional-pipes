@@ -341,11 +341,11 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "2.0Dev2";
+		return "2.0Dev3";
 	}
 	@Override
 	public void HandlePacket(Packet230ModLoader packet) {
-		//System.out.println("Packet: " + packet.packetType);
+		System.out.println("Packet: " + packet.packetType);
 		if (packet.packetType == PACKET_SET_AW) {
 			int x = packet.dataInt [0];
 			int y = packet.dataInt [1];
