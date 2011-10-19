@@ -147,6 +147,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 			{
 				//This pipe can actually receive items
 				idsToRemove.add(item.entityId);
+				((PipeTransportItems) this.transport).scheduleRemoval(item);
 				Position newItemPos = getNewItemPos(destPos, newPos, Utils.getPipeFloorOf(item.item));
 				item.setPosition(newItemPos.x,newItemPos.y,newItemPos.z);
 				((PipeTransportItems)pipe.pipe.transport).entityEntering(item, newPos);
@@ -155,6 +156,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 		else if (tile instanceof IPipeEntry)
 		{
 			idsToRemove.add(item.entityId);
+			((PipeTransportItems) this.transport).scheduleRemoval(item);
 			Position newItemPos = getNewItemPos(destPos, newPos, Utils.getPipeFloorOf(item.item));
 			item.setPosition(newItemPos.x,newItemPos.y,newItemPos.z);
 			((IPipeEntry) tile).entityEntering(item, newPos);
@@ -165,6 +167,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 			if (!APIProxy.isClient(worldObj)) {
 				if (utils.checkAvailableSlot((IInventory) tile, true, destPos.orientation.reverse()) && utils.items.stackSize == 0) {
 					idsToRemove.add(item.entityId);
+					((PipeTransportItems) this.transport).scheduleRemoval(item);
 					// Do nothing, we're adding the object to the world
 				} else {
 					//Wont accept it return...

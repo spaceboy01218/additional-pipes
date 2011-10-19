@@ -32,9 +32,7 @@ import net.minecraft.src.buildcraft.zeldo.logic.PipeLogicDistributor;
 
 public class PipeItemsDistributor extends Pipe implements IPipeTransportItemsHook {
 
-	private int baseTexture = mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE;
-	//private int plainTexture = mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED;
-	private @TileNetworkData int nextTexture = baseTexture;
+	private @TileNetworkData int nextTexture = mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_0;
 	public @TileNetworkData int distData[] = {1,1,1,1,1,1};
 	public @TileNetworkData int curTick = 0;
 
@@ -44,19 +42,8 @@ public class PipeItemsDistributor extends Pipe implements IPipeTransportItemsHoo
 
 	@Override
 	public void prepareTextureFor(Orientations connection) {
-		//		if (connection == Orientations.Unknown) {
-		//			nextTexture = baseTexture;
-		//		} else {
-		//			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-		//
-		//			if (metadata == connection.ordinal()) {
-		//				nextTexture = baseTexture;
-		//			} else {
-		//				nextTexture = plainTexture;
-		//			}
-		//		}
 		if (connection == Orientations.Unknown) {
-			nextTexture = mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE;
+			nextTexture = mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_0;
 		} else {
 			nextTexture = mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_0 + connection.ordinal();
 		}
