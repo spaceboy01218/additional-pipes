@@ -25,6 +25,7 @@ import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemTeleport;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsAdvancedInsertion;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsAdvancedWood;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsDistributor;
+import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsRedstone;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeLiquidsTeleport;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipePowerTeleport;
 import net.minecraft.src.forge.Configuration;
@@ -73,8 +74,6 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	//Distributor
 	public static Item pipeDistributor;
 	public static int DEFUALT_DISTRIBUTOR_TELEPORT_ID = 4046;
-	public static int DEFUALT_DISTRIBUTOR_TEXTURE = 8*16+4;
-	public static int DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED = 8*16+5;
 	public static int DEFUALT_DISTRIBUTOR_TEXTURE_0 = 8*16+9;
 	public static String DEFUALT_DISTRIBUTOR_TEXTURE_FILE_BASE = "/net/minecraft/src/buildcraft/zeldo/gui/Dist";
 	public static String DEFUALT_DISTRIBUTOR_TEXTURE_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/DistributionOpen.png";
@@ -93,6 +92,16 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static int DEFUALT_Insertion_ID = 4044;
 	public static int DEFUALT_Insertion_TEXTURE = 8*16+8;
 	public static String DEFUALT_Insertion_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/AdvInsert.png";
+
+	//Redstone
+	public static Item pipeRedStone;
+	public static int DEFUALT_RedStone_ID = 4043;
+	public static int DEFUALT_RedStone_TEXTURE = 8*16+4;
+	public static int DEFUALT_RedStone_TEXTURE_POWERED = 8*16+5;
+	public static String DEFUALT_RedStone_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/RS.png";
+	public static String DEFUALT_RedStone_FILE_POWERED = "/net/minecraft/src/buildcraft/zeldo/gui/RSP.png";
+
+	//Redstone ticker
 
 	//GUI Packet Ids
 	public static int GUI_ITEM_SEND = 255;
@@ -126,6 +135,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static boolean isInGame = false;
 	public static boolean lagFix = false;
 	public static boolean wrenchOpensGui = false;
+	public static boolean allowWPRemove = false; //Remove waterproofing/redstone
 
 
 	//ChunkLoader Variables
@@ -203,6 +213,8 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 		lagFix = Boolean.parseBoolean(config.getOrCreateBooleanProperty("saveLagFix", Configuration.GENERAL_PROPERTY, false).value);
 		wrenchOpensGui = Boolean.parseBoolean(config.getOrCreateBooleanProperty("wrenchOpensGui", Configuration.GENERAL_PROPERTY, false).value);
+		allowWPRemove = Boolean.parseBoolean(config.getOrCreateBooleanProperty("EnableWaterProofRemoval", Configuration.GENERAL_PROPERTY, false).value);
+
 		config.save();
 
 		AddImageOverride();
@@ -215,6 +227,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		pipeDistributor = createPipe(mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TELEPORT_ID, PipeItemsDistributor.class, "Distribution Transport Pipe", Item.redstone, Item.ingotIron, Block.glass, Item.ingotIron);
 		pipeAdvancedWood = createPipe(mod_zAdditionalPipes.DEFUALT_ADVANCEDWOOD_ID, PipeItemsAdvancedWood.class, "Advanced Wooden Transport Pipe", Item.redstone, Block.planks, Block.glass, Block.planks);
 		pipeAdvancedInsertion = createPipe(mod_zAdditionalPipes.DEFUALT_Insertion_ID, PipeItemsAdvancedInsertion.class, "Advanced Insertion Transport Pipe", Item.redstone, Block.stone, Block.glass, Block.stone);
+		pipeRedStone = createPipe(mod_zAdditionalPipes.DEFUALT_RedStone_ID, PipeItemsRedstone.class, "Redstone Transport Pipe", Item.redstone, Block.glass, Item.redstone, null);
 
 		MinecraftForgeClient.registerCustomItemRenderer(pipeItemTeleport.shiftedIndex, mod_BuildCraftTransport.instance);
 		MinecraftForgeClient.registerCustomItemRenderer(pipeLiquidTeleport.shiftedIndex, mod_BuildCraftTransport.instance);
@@ -222,6 +235,28 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		MinecraftForgeClient.registerCustomItemRenderer(pipeDistributor.shiftedIndex, mod_BuildCraftTransport.instance);
 		MinecraftForgeClient.registerCustomItemRenderer(pipeAdvancedWood.shiftedIndex, mod_BuildCraftTransport.instance);
 		MinecraftForgeClient.registerCustomItemRenderer(pipeAdvancedInsertion.shiftedIndex, mod_BuildCraftTransport.instance);
+		MinecraftForgeClient.registerCustomItemRenderer(pipeRedStone.shiftedIndex, mod_BuildCraftTransport.instance);
+
+		if (allowWPRemove)
+		{
+			CraftingManager craftingmanager = CraftingManager.getInstance();
+
+			//Mine
+			craftingmanager.addRecipe(new ItemStack(pipeItemTeleport, 1), new Object[] {"A", Character.valueOf('A'), pipeLiquidTeleport});
+			craftingmanager.addRecipe(new ItemStack(pipeItemTeleport, 1), new Object[] {"A", Character.valueOf('A'), pipePowerTeleport});
+
+			//BC Liquid
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsCobblestone, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsCobblestone});
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsGold, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsGold});
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsIron, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsIron});
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsStone, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsStone});
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsWood, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsWood});
+
+			//BC Power
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsGold, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipePowerGold});
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsStone, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipePowerStone});
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsWood, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipePowerWood});
+		}
 
 		RegisterPipeIds();
 
@@ -239,9 +274,9 @@ public class mod_zAdditionalPipes extends BaseModMp {
 			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
 			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_POWER_TELEPORT_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_POWER_TELEPORT_TEXTURE_FILE));
 			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
-			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_FILE));
+			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_RedStone_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_RedStone_FILE));
 			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
-			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_CLOSED, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_FILE_CLOSED));
+			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_RedStone_TEXTURE_POWERED, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_RedStone_FILE_POWERED));
 			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
 			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_ADVANCEDWOOD_TEXTURE_CLOSED, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_ADVANCEDWOOD_FILE_CLOSED));
 			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
@@ -306,7 +341,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "2.0Dev1";
+		return "2.0Dev2";
 	}
 	@Override
 	public void HandlePacket(Packet230ModLoader packet) {
@@ -417,14 +452,19 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		Property prop = config
 				.getOrCreateIntProperty(name + ".id",
 						Configuration.ITEM_PROPERTY, defaultID);
+		Property propLoad = config
+				.getOrCreateBooleanProperty(name + ".Enabled",
+						Configuration.ITEM_PROPERTY, true);
 		config.save();
 		int id = Integer.parseInt(prop.value);
 		Item res =  BlockGenericPipe.registerPipe (id, clas);
 		res.setItemName(clas.getSimpleName());
 		CoreProxy.addName(res, descr);
 
-		CraftingManager craftingmanager = CraftingManager.getInstance();
+		if (!Boolean.parseBoolean(propLoad.value))
+			return res;
 
+		CraftingManager craftingmanager = CraftingManager.getInstance();
 		if (r1 != null && r2 != null && r3 != null && r4 != null) {
 			craftingmanager.addRecipe(new ItemStack(res, 8), new Object[] {
 				" D ", "ABC", "   ",

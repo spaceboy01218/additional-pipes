@@ -49,9 +49,12 @@ public class PipeItemsAdvancedInsertion extends Pipe implements IPipeTransportIt
 			item.speed = Utils.pipeNormalSpeed;
 		}
 	}
-
 	@Override
 	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos, EntityPassiveItem item) {
+		return filterPossibleMovements(possibleOrientations, pos, item, 0);
+	}
+
+	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos, EntityPassiveItem item, int Level) {
 		LinkedList<Orientations> newOris = new LinkedList<Orientations>();
 		LinkedList<Orientations> nullReturn = new LinkedList<Orientations>();
 		nullReturn.add(Orientations.values()[0]);
@@ -71,7 +74,7 @@ public class PipeItemsAdvancedInsertion extends Pipe implements IPipeTransportIt
 		}
 
 
-		//System.out.println("NewOris Size: " + newOris.size());
+		//System.out.println("NewOris Size: " + newOris.size() + " - PO Size: " + possibleOrientations.size() + " - Level: " + Level);
 		if (newOris.size() > 0)
 		{
 			Position destPos =  new Position(pos.x, pos.y, pos.z, newOris.get( (new Random()) .nextInt(newOris.size()) ) );
@@ -84,15 +87,19 @@ public class PipeItemsAdvancedInsertion extends Pipe implements IPipeTransportIt
 					((PipeTransportItems) this.transport).scheduleRemoval(item);
 				} else {
 					item.item = utils.items;
-					return this.filterPossibleMovements(possibleOrientations, pos, item);
+					return this.filterPossibleMovements(possibleOrientations, pos, item, (Level + 1));
 					//EntityItem dropped = item.toEntityItem(destPos.orientation);
 				}
 			}
 
-			System.out.println("Insertion Output 2 : " + destPos.orientation);
+			//System.out.println("Insertion Output 2 : " + destPos.orientation);
 			return nullReturn;
 		}
-		return possibleOrientations;
+		if (Level == 0)
+		{
+			return possibleOrientations;
+		}
+		return ((PipeTransportItems)this.transport).getPossibleMovements(pos, item);
 	}
 
 	@Override

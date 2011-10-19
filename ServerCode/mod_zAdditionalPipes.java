@@ -19,6 +19,7 @@ import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemTeleport;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsAdvancedInsertion;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsAdvancedWood;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsDistributor;
+import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsRedstone;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeLiquidsTeleport;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipePowerTeleport;
 import net.minecraft.src.forge.Configuration;
@@ -81,6 +82,10 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static Item pipeAdvancedInsertion;
 	public static int DEFUALT_Insertion_ID = 4044;
 	public static int DEFUALT_Insertion_TEXTURE = 8;
+	
+	//Redstone
+		public static Item pipeRedStone;
+		public static int DEFUALT_RedStone_ID = 4043;
 
 	//GUI Packet Ids
 	public static int GUI_ITEM_SEND = 255;
@@ -115,6 +120,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static boolean isInGame = false;
 	public static boolean lagFix = false;
 	public static boolean wrenchOpensGui = false;
+	public static boolean allowWPRemove = false; //Remove waterproofing/redstone
 
 
 	//ChunkLoader Variables
@@ -161,6 +167,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 		lagFix = Boolean.parseBoolean(config.getOrCreateBooleanProperty("saveLagFix", Configuration.GENERAL_PROPERTY, false).value);
 		wrenchOpensGui = Boolean.parseBoolean(config.getOrCreateBooleanProperty("wrenchOpensGui", Configuration.GENERAL_PROPERTY, false).value);
+		allowWPRemove = Boolean.parseBoolean(config.getOrCreateBooleanProperty("EnableWaterProofRemoval", Configuration.GENERAL_PROPERTY, false).value);
 		
 		config.save();
 
@@ -176,7 +183,28 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		pipeDistributor = createPipe(mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TELEPORT_ID, PipeItemsDistributor.class, "Distribution Transport Pipe", Item.redstone, Item.ingotIron, Block.glass, Item.ingotIron);
 		pipeAdvancedWood = createPipe(mod_zAdditionalPipes.DEFUALT_ADVANCEDWOOD_ID, PipeItemsAdvancedWood.class, "Advanced Wooden Transport Pipe", Item.redstone, Block.planks, Block.glass, Block.planks);
 		pipeAdvancedInsertion = createPipe(mod_zAdditionalPipes.DEFUALT_Insertion_ID, PipeItemsAdvancedInsertion.class, "Advanced Insertion Transport Pipe", Item.redstone, Block.stone, Block.glass, Block.stone);
+		pipeRedStone = createPipe(mod_zAdditionalPipes.DEFUALT_RedStone_ID, PipeItemsRedstone.class, "Redstone Transport Pipe", Item.redstone, Block.glass, Item.redstone, null);
 		
+		if (allowWPRemove)
+		{
+			CraftingManager craftingmanager = CraftingManager.getInstance();
+			
+			//Mine
+			craftingmanager.addRecipe(new ItemStack(pipeItemTeleport, 1), new Object[] {"A", Character.valueOf('A'), pipeLiquidTeleport});
+			craftingmanager.addRecipe(new ItemStack(pipeItemTeleport, 1), new Object[] {"A", Character.valueOf('A'), pipePowerTeleport});
+			
+			//BC Liquid
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsCobblestone, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsCobblestone});
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsGold, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsGold});
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsIron, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsIron});
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsStone, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsStone});
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsWood, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsWood});
+			
+			//BC Power
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsGold, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipePowerGold});
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsStone, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipePowerStone});
+			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsWood, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipePowerWood});
+		}
 	}
 	//	public GuiScreen HandleGUI(int inventoryType) 
 	//    {
@@ -191,7 +219,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "2.0Dev1";
+		return "2.0Dev2";
 	}
 
 	public void HandlePacket(Packet230ModLoader packet, EntityPlayerMP player) {
@@ -373,6 +401,9 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		Property prop = config
 				.getOrCreateIntProperty(name + ".id",
 						Configuration.ITEM_PROPERTY, defaultID);
+		Property propLoad = config
+				.getOrCreateBooleanProperty(name + ".Enabled",
+						Configuration.ITEM_PROPERTY, true);
 		config.save();
 		int id = Integer.parseInt(prop.value);
 		Item res =  BlockGenericPipe.registerPipe (id, clas);
@@ -380,9 +411,10 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		CoreProxy.addName(res, descr);
 		ModLoader.RegisterTileEntity(TileGenericPipe.class, "teleportPipe");
 
+		if (!Boolean.parseBoolean(propLoad.value))
+			return res;
 
 		CraftingManager craftingmanager = CraftingManager.getInstance();
-
 		if (r1 != null && r2 != null && r3 != null && r4 != null) {						
 			craftingmanager.addRecipe(new ItemStack(res, 8), new Object[] {
 				" D ", "ABC", "   ", 
