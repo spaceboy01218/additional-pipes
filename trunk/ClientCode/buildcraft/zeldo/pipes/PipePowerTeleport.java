@@ -217,9 +217,11 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 			if (!(worldObj.getBlockTileEntity(PowerTeleportPipes.get(i).xCoord, PowerTeleportPipes.get(i).yCoord, PowerTeleportPipes.get(i).zCoord) instanceof TileGenericPipe)) {
 				//System.out.println("Removed: " + i);
 				toRemove.add(PowerTeleportPipes.get(i));
+				MutiPlayerProxy.DeleteChunkFromList(PowerTeleportPipes.get(i).xCoord, PowerTeleportPipes.get(i).zCoord);
 			}
 		}
 		PowerTeleportPipes.removeAll(toRemove);
+		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 	}
 	@Override
 	public void setPosition (int xCoord, int yCoord, int zCoord) {
