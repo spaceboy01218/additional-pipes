@@ -86,8 +86,8 @@ public class MutiPlayerProxy {
 		return ModLoader.getMinecraftInstance().theWorld.multiplayerWorld;
 	}
 	public static void AddChunkToList(int x, int z) {
-		if (isOnServer())
-			return;
+		//if (isOnServer())
+		//	return;
 		MutiPlayerProxy.LoadChunkData();
 		x = x >> 4;
 		z = z >> 4;
@@ -101,10 +101,12 @@ public class MutiPlayerProxy {
 
 		}
 		mod_zAdditionalPipes.keepLoadedChunks.add(new mod_zAdditionalPipes.chunkXZ(x, z));
-		//System.out.println("Added PermChunk @ " + x + "," + z);
+		System.out.println("Added PermChunk @ " + x + "," + z);
 		SaveChunkData();
 	}
 	public static void SaveChunkData() {
+		if (isOnServer())
+			return;
 		try {
 
 			//System.out.println("Saving ChunkLoader data...");
@@ -141,8 +143,8 @@ public class MutiPlayerProxy {
 		}
 	}
 	public static void DeleteChunkFromList(int x, int z) {
-		if (isOnServer())
-			return;
+		//if (isOnServer())
+		//	return;
 		MutiPlayerProxy.LoadChunkData();
 		x = x >> 4;
 		z = z >> 4;
@@ -151,7 +153,7 @@ public class MutiPlayerProxy {
 			chunkXZ curChunk = chunks.next();
 			if (curChunk.x == x && curChunk.z == z) {
 				mod_zAdditionalPipes.keepLoadedChunks.remove(curChunk);
-				//System.out.println("Removed PermChunk @ " + x + "," + z);
+				System.out.println("Removed PermChunk @ " + x + "," + z);
 				SaveChunkData();
 				return;
 			}

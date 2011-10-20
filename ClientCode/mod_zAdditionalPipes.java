@@ -10,6 +10,8 @@ import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.buildcraft.api.APIProxy;
+import net.minecraft.src.buildcraft.api.LaserKind;
+import net.minecraft.src.buildcraft.core.Box;
 import net.minecraft.src.buildcraft.core.CoreProxy;
 import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
 import net.minecraft.src.buildcraft.transport.Pipe;
@@ -145,13 +147,75 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	public static List<Integer> pipeIds = new LinkedList<Integer>();
 
+	public KeyBinding key_lasers = new KeyBinding("key_lasers", 67); //F9
+	public static boolean lasers_showing = false;
+	public static List<Box> laser_box = new LinkedList<Box>();
+
+	public void KeyboardEvent(KeyBinding keybinding)
+	{
+		System.out.println("Keyboard Event");
+		Minecraft mc = ModLoader.getMinecraftInstance();
+
+		if(keybinding == this.key_lasers)
+		{
+			if (!lasers_showing)
+			{
+				System.out.println("Lasers on...");
+				lasers_showing = true;
+				for (int i=0; i<keepLoadedChunks.size(); i++)
+				{
+					Box temp[] = new Box[5];
+
+					int y = (int) mc.thePlayer.posY;
+					temp[0] = new Box();
+					temp[1] = new Box();
+					temp[2] = new Box();
+					temp[3] = new Box();
+					temp[4] = new Box();
+
+					temp[0].initialize(keepLoadedChunks.get(i).x * 16, y, keepLoadedChunks.get(i).z * 16, keepLoadedChunks.get(i).x * 16 + 16, y, keepLoadedChunks.get(i).z * 16 + 16);
+					temp[1].initialize((keepLoadedChunks.get(i).x - 1) * 16, y, keepLoadedChunks.get(i).z * 16, (keepLoadedChunks.get(i).x - 1) * 16 + 16, y, keepLoadedChunks.get(i).z * 16 + 16);
+					temp[2].initialize((keepLoadedChunks.get(i).x + 1) * 16, y, keepLoadedChunks.get(i).z * 16, (keepLoadedChunks.get(i).x + 1) * 16 + 16, y, keepLoadedChunks.get(i).z * 16 + 16);
+					temp[3].initialize(keepLoadedChunks.get(i).x * 16, y, (keepLoadedChunks.get(i).z + 1) * 16, keepLoadedChunks.get(i).x * 16 + 16, y, (keepLoadedChunks.get(i).z + 1) * 16 + 16);
+					temp[4].initialize(keepLoadedChunks.get(i).x * 16, y, (keepLoadedChunks.get(i).z - 1) * 16, keepLoadedChunks.get(i).x * 16 + 16, y, (keepLoadedChunks.get(i).z - 1) * 16 + 16);
+
+					for (int a=0; a< temp.length; a++)
+					{
+						if (!laser_box.contains(temp[a])) { //Dont want to display the same one 6 times now do we? :p
+							temp[a].createLasers(mc.theWorld, LaserKind.Blue);
+							laser_box.add(temp[a]);
+						}
+					}
+
+
+				}
+			} else
+			{
+				System.out.println("Lasers off...");
+				lasers_showing = false;
+				List<Box> delete = new LinkedList<Box>();
+				for (int i=0; i<laser_box.size(); i++)
+				{
+					Box temp = laser_box.get(i);
+					temp.deleteLasers();
+					delete.add(temp);
+				}
+				laser_box.removeAll(delete);
+			}
+		}
+	}
+
 	public mod_zAdditionalPipes() {
 		ModLoader.SetInGameHook(this, true, true);
 		ModLoader.SetInGUIHook(this, true, true);
+		ModLoader.RegisterKey(this, this.key_lasers, false);
+		ModLoader.AddLocalization("key_lasers", "Turn on/off chunk loader boundries");
 	}
 	@Override
 	public boolean OnTickInGame(Minecraft minecraft)
 	{
+		if (MutiPlayerProxy.isOnServer())
+			return true;
 		if (System.currentTimeMillis() - chunkTestTime >= lastCheckTime) {
 			lastCheckTime = System.currentTimeMillis();
 			if (lagFix) {
@@ -341,7 +405,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "2.0Dev3";
+		return "2.0Dev2";
 	}
 	@Override
 	public void HandlePacket(Packet230ModLoader packet) {

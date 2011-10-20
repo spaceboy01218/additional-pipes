@@ -63,6 +63,7 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 			if (!(worldObj.getBlockTileEntity(LiquidTeleportPipes.get(i).xCoord, LiquidTeleportPipes.get(i).yCoord, LiquidTeleportPipes.get(i).zCoord) instanceof TileGenericPipe)) {
 				//System.out.println("Removed: " + i);
 				toRemove.add(LiquidTeleportPipes.get(i));
+				MutiPlayerProxy.DeleteChunkFromList(LiquidTeleportPipes.get(i).xCoord, LiquidTeleportPipes.get(i).zCoord);
 			}
 		}
 		LiquidTeleportPipes.removeAll(toRemove);
@@ -79,6 +80,7 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 		}
 		LiquidTeleportPipes.removeAll(toRemove);
 		super.setPosition(xCoord, yCoord, zCoord);
+		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 	}
 
 	public List<PipeLiquidsTeleport> getConnectedPipes(boolean ignoreReceive) {

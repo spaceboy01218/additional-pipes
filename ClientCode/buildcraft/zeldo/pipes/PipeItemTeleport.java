@@ -59,6 +59,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 			if (!(worldObj.getBlockTileEntity(ItemTeleportPipes.get(i).xCoord, ItemTeleportPipes.get(i).yCoord, ItemTeleportPipes.get(i).zCoord) instanceof TileGenericPipe)) {
 				//System.out.println("Removed: " + i);
 				toRemove.add(ItemTeleportPipes.get(i));
+				MutiPlayerProxy.DeleteChunkFromList(ItemTeleportPipes.get(i).xCoord, ItemTeleportPipes.get(i).zCoord);
 			}
 		}
 		ItemTeleportPipes.removeAll(toRemove);
@@ -79,6 +80,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 		}
 		ItemTeleportPipes.removeAll(toRemove);
 		super.setPosition(xCoord, yCoord, zCoord);
+		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 	}
 	public List<PipeItemTeleport> getConnectedPipes(boolean ignoreReceive) {
 		List<PipeItemTeleport> Temp = new LinkedList<PipeItemTeleport>();
