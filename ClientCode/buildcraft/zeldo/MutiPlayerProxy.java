@@ -193,6 +193,7 @@ public class MutiPlayerProxy {
 			OFFound = true;
 			System.out.println("[AdditionalPipes] OptiFine found... Forced to override the base texture...");
 			BuildCraftCore.customBuildCraftTexture = mod_zAdditionalPipes.MASTER_OVERRIDE_FILE;
+			MinecraftForgeClient.preloadTexture(BuildCraftCore.customBuildCraftTexture);
 		} catch (Exception e) {
 			//e.printStackTrace();
 			System.out.println("[AdditionalPipes] OptiFine not found...");

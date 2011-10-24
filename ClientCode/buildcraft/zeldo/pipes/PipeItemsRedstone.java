@@ -11,21 +11,18 @@ package net.minecraft.src.buildcraft.zeldo.pipes;
 import java.util.LinkedList;
 
 import net.minecraft.src.BuildCraftTransport;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.World;
 import net.minecraft.src.mod_zAdditionalPipes;
 import net.minecraft.src.buildcraft.api.EntityPassiveItem;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
-import net.minecraft.src.buildcraft.transport.IPipeProvideRedstonePowerHook;
 import net.minecraft.src.buildcraft.transport.IPipeTransportItemsHook;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicStone;
 import net.minecraft.src.buildcraft.transport.PipeTransportItems;
 
-public class PipeItemsRedstone extends Pipe implements IPipeTransportItemsHook, IPipeProvideRedstonePowerHook {
+public class PipeItemsRedstone extends Pipe implements IPipeTransportItemsHook {
 
 	private @TileNetworkData int nextTexture = mod_zAdditionalPipes.DEFUALT_RedStone_TEXTURE;
 	public @TileNetworkData boolean isPowering = false;
@@ -85,7 +82,7 @@ public class PipeItemsRedstone extends Pipe implements IPipeTransportItemsHook, 
 	}
 
 	@Override
-	public boolean isPoweringTo(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+	public boolean isPoweringTo(int l) {
 		//System.out.println("RedStoneIsPoweringTo");
 		if (((PipeTransportItems)this.transport).travelingEntities.size() == 0)
 		{
@@ -93,7 +90,7 @@ public class PipeItemsRedstone extends Pipe implements IPipeTransportItemsHook, 
 			return false;
 		}
 		isPowering = true;
-		int i1 = iblockaccess.getBlockMetadata(i, j, k);
+		int i1 = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		if(i1 == 5 && l == 1)
 		{
 			return false;
@@ -114,8 +111,8 @@ public class PipeItemsRedstone extends Pipe implements IPipeTransportItemsHook, 
 	}
 
 	@Override
-	public boolean isIndirectlyPoweringTo(World world, int i, int j, int k, int l) {
-		return isPoweringTo(world, i, j, k, l);
+	public boolean isIndirectlyPoweringTo(int l) {
+		return isPoweringTo(l);
 	}
 
 }
