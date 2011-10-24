@@ -47,7 +47,6 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 
 	public PipeLiquidsTeleport(int itemID) {
 		super(new PipeTransportLiquids(), new PipeLogicLiquidTeleport(), itemID);
-		LiquidTeleportPipes.add(this);
 	}
 
 	@Override
@@ -66,7 +65,9 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 				MutiPlayerProxy.DeleteChunkFromList(LiquidTeleportPipes.get(i).xCoord, LiquidTeleportPipes.get(i).zCoord);
 			}
 		}
+
 		LiquidTeleportPipes.removeAll(toRemove);
+
 	}
 
 	@Override
@@ -79,6 +80,7 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 			}
 		}
 		LiquidTeleportPipes.removeAll(toRemove);
+		LiquidTeleportPipes.add(this);
 		super.setPosition(xCoord, yCoord, zCoord);
 		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 	}

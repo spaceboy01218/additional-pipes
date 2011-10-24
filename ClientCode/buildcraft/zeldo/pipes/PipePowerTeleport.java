@@ -45,7 +45,7 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 	public @TileNetworkData static List<PipePowerTeleport> PowerTeleportPipes = new LinkedList<PipePowerTeleport>();
 	public PipePowerTeleport(int itemID) {
 		super(new PipeTransportPower(), new PipeLogicPowerTeleport(), itemID);
-		PowerTeleportPipes.add(this);
+
 	}
 	@Override
 	public int getBlockTexture() {
@@ -233,7 +233,9 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 			}
 		}
 		PowerTeleportPipes.removeAll(toRemove);
+		PowerTeleportPipes.add(this);
 		super.setPosition(xCoord, yCoord, zCoord);
+		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 	}
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
