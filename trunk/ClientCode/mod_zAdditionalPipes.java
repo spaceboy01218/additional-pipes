@@ -28,6 +28,7 @@ import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsAdvancedInsertion;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsAdvancedWood;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsDistributor;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsRedstone;
+import net.minecraft.src.buildcraft.zeldo.pipes.PipeLiquidsRedstone;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeLiquidsTeleport;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipePowerTeleport;
 import net.minecraft.src.forge.Configuration;
@@ -102,6 +103,14 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static int DEFUALT_RedStone_TEXTURE_POWERED = 8*16+5;
 	public static String DEFUALT_RedStone_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/RS.png";
 	public static String DEFUALT_RedStone_FILE_POWERED = "/net/minecraft/src/buildcraft/zeldo/gui/RSP.png";
+
+	//Redstone Liquid
+	public static Item pipeRedStoneLiquid;
+	public static int DEFUALT_RedStoneLiquid_ID = 4042;
+	public static int DEFUALT_RedStoneLiquid_TEXTURE = 8*16+1;
+	public static int DEFUALT_RedStoneLiquid_TEXTURE_POWERED = 8*16+15;
+	public static String DEFUALT_RedStoneLiquid_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/RSL.png";
+	public static String DEFUALT_RedStoneLiquid_FILE_POWERED = "/net/minecraft/src/buildcraft/zeldo/gui/RSLP.png";
 
 	//Redstone ticker
 
@@ -292,6 +301,8 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		pipeAdvancedWood = createPipe(mod_zAdditionalPipes.DEFUALT_ADVANCEDWOOD_ID, PipeItemsAdvancedWood.class, "Advanced Wooden Transport Pipe", Item.redstone, Block.planks, Block.glass, Block.planks);
 		pipeAdvancedInsertion = createPipe(mod_zAdditionalPipes.DEFUALT_Insertion_ID, PipeItemsAdvancedInsertion.class, "Advanced Insertion Transport Pipe", Item.redstone, Block.stone, Block.glass, Block.stone);
 		pipeRedStone = createPipe(mod_zAdditionalPipes.DEFUALT_RedStone_ID, PipeItemsRedstone.class, "Redstone Transport Pipe", Item.redstone, Block.glass, Item.redstone, null);
+		pipeRedStoneLiquid = createPipe (mod_zAdditionalPipes.DEFUALT_RedStoneLiquid_ID, PipeLiquidsRedstone.class, "Waterproof Redstone Pipe", BuildCraftTransport.pipeWaterproof, pipeRedStone, null, null);
+
 
 		MinecraftForgeClient.registerCustomItemRenderer(pipeItemTeleport.shiftedIndex, mod_BuildCraftTransport.instance);
 		MinecraftForgeClient.registerCustomItemRenderer(pipeLiquidTeleport.shiftedIndex, mod_BuildCraftTransport.instance);
@@ -300,6 +311,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		MinecraftForgeClient.registerCustomItemRenderer(pipeAdvancedWood.shiftedIndex, mod_BuildCraftTransport.instance);
 		MinecraftForgeClient.registerCustomItemRenderer(pipeAdvancedInsertion.shiftedIndex, mod_BuildCraftTransport.instance);
 		MinecraftForgeClient.registerCustomItemRenderer(pipeRedStone.shiftedIndex, mod_BuildCraftTransport.instance);
+		MinecraftForgeClient.registerCustomItemRenderer(pipeRedStoneLiquid.shiftedIndex, mod_BuildCraftTransport.instance);
 
 		if (allowWPRemove)
 		{
@@ -308,6 +320,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 			//Mine
 			craftingmanager.addRecipe(new ItemStack(pipeItemTeleport, 1), new Object[] {"A", Character.valueOf('A'), pipeLiquidTeleport});
 			craftingmanager.addRecipe(new ItemStack(pipeItemTeleport, 1), new Object[] {"A", Character.valueOf('A'), pipePowerTeleport});
+			craftingmanager.addRecipe(new ItemStack(pipeRedStone, 1), new Object[] {"A", Character.valueOf('A'), pipeRedStoneLiquid});
 
 			//BC Liquid
 			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsCobblestone, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsCobblestone});
@@ -334,6 +347,8 @@ public class mod_zAdditionalPipes extends BaseModMp {
 			int i = (Integer) textures.get(BuildCraftCore.customBuildCraftTexture);
 			ModTextureStatic modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_ITEM_TELEPORT_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_ITEM_TELEPORT_TEXTURE_FILE));
 			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
+			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_RedStoneLiquid_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_RedStoneLiquid_FILE));
+			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
 			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_LIQUID_TELEPORT_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_LIQUID_TELEPORT_TEXTURE_FILE));
 			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
 			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_POWER_TELEPORT_TEXTURE, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_POWER_TELEPORT_TEXTURE_FILE));
@@ -359,6 +374,8 @@ public class mod_zAdditionalPipes extends BaseModMp {
 			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_0 + 4, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_FILE_BASE + "4.png"));
 			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
 			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_0 + 5, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_DISTRIBUTOR_TEXTURE_FILE_BASE + "5.png"));
+			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
+			modtexturestatic = new ModTextureStatic(mod_zAdditionalPipes.DEFUALT_RedStoneLiquid_TEXTURE_POWERED, i, ModLoader.loadImage(ModLoader.getMinecraftInstance().renderEngine, mod_zAdditionalPipes.DEFUALT_RedStoneLiquid_FILE_POWERED));
 			ModLoader.getMinecraftInstance().renderEngine.registerTextureFX(modtexturestatic);
 		} catch (Exception e) {
 			e.printStackTrace();
