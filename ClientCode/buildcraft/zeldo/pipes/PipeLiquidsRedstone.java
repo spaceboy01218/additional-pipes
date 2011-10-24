@@ -85,7 +85,7 @@ public class PipeLiquidsRedstone extends Pipe {
 	public void updateEntity() {
 		super.updateEntity();
 		//System.out.println("Quantity: " + (((PipeTransportLiquids)this.transport).getLiquidQuantity()) + " - Wanted: " + computeMaxLiquid() + " - Qua2: " + computeEnds()[1]);
-		System.out.println("Quantity: " + ((PipeTransportLiquids)this.transport).getCenter());
+		//System.out.println("Quantity: " + ((PipeTransportLiquids)this.transport).getCenter());
 		if ( ((PipeTransportLiquids)this.transport).getCenter() < 250 && isPowering)
 		{
 			isPowering = false;
