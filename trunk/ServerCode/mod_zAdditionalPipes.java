@@ -234,7 +234,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "Rev25";
+		return "Rev26";
 	}
 
 	public void HandlePacket(Packet230ModLoader packet, EntityPlayerMP player) {

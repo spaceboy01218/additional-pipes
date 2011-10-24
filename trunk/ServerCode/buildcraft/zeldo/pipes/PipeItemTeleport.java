@@ -42,8 +42,8 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 
 	public PipeItemTeleport(int itemID) {
 		super(new PipeTransportItems(), new PipeLogicItemTeleport(), itemID);
-		ItemTeleportPipes.add(this);
-		//System.out.println("Exists: " + (container != null));
+		//ItemTeleportPipes.add(this);
+		////System.out.println("Exists: " + (container != null));
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 		LinkedList <PipeItemTeleport> toRemove = new LinkedList <PipeItemTeleport> ();
 		for (int i=0; i< ItemTeleportPipes.size(); i++) {
 			if (!(worldObj.getBlockTileEntity(ItemTeleportPipes.get(i).xCoord, ItemTeleportPipes.get(i).yCoord, ItemTeleportPipes.get(i).zCoord) instanceof TileGenericPipe)) {
-				//System.out.println("Removed: " + i);
+				//System.out.println("Removed: " + i + " - Class: " + worldObj.getBlockTileEntity(ItemTeleportPipes.get(i).xCoord, ItemTeleportPipes.get(i).yCoord, ItemTeleportPipes.get(i).zCoord).getClass().getName());
 				toRemove.add(ItemTeleportPipes.get(i));
 				MutiPlayerProxy.DeleteChunkFromList(ItemTeleportPipes.get(i).xCoord, ItemTeleportPipes.get(i).zCoord);
 			}
@@ -74,23 +74,26 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 		LinkedList <PipeItemTeleport> toRemove = new LinkedList <PipeItemTeleport> ();
 		for (int i=0; i< ItemTeleportPipes.size(); i++) {
 			if (ItemTeleportPipes.get(i).xCoord == xCoord &&  ItemTeleportPipes.get(i).yCoord == yCoord && ItemTeleportPipes.get(i).zCoord == zCoord) {
-				//System.out.println("Removed OldLoc: " + i);
+				////System.out.println("Removed OldLoc: " + i);
 				toRemove.add(ItemTeleportPipes.get(i));
 			}
 		}
 		ItemTeleportPipes.removeAll(toRemove);
+		ItemTeleportPipes.add(this);
 		super.setPosition(xCoord, yCoord, zCoord);
 		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 	}
 	public List<PipeItemTeleport> getConnectedPipes(boolean ignoreReceive) {
 		List<PipeItemTeleport> Temp = new LinkedList<PipeItemTeleport>();
 		removeOldPipes();
+		//System.out.println("Tele Count: " + ItemTeleportPipes.size());
 		for (int i=0; i< ItemTeleportPipes.size(); i++) {
 			if (ItemTeleportPipes.get(i).Owner.equalsIgnoreCase(Owner) || MutiPlayerProxy.isOnServer() == false) {
 				if (ItemTeleportPipes.get(i).canReceive || ignoreReceive) {
+					//System.out.println("MyFreq: " + myFreq);
 					if (ItemTeleportPipes.get(i).myFreq == myFreq) {
 						if (xCoord != ItemTeleportPipes.get(i).xCoord || yCoord != ItemTeleportPipes.get(i).yCoord || zCoord != ItemTeleportPipes.get(i).zCoord ) {
-							////System.out.print("MyPos: " + getPosition().toString() + " ++ Pos: " + teleportPipes.get(i).getPosition().toString() + "\n");
+							//System.out.print("MyPos: " + getPosition().toString() + " ++ Pos: " + ItemTeleportPipes.get(i).getPosition().toString() + "\n");
 							//System.out.println("aExists: " + (worldObj.getBlockTileEntity(ItemTeleportPipes.get(i).xCoord, ItemTeleportPipes.get(i).yCoord, ItemTeleportPipes.get(i).zCoord) instanceof TileGenericPipe));
 							Temp.add(ItemTeleportPipes.get(i));
 						}
@@ -119,7 +122,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 	public LinkedList<Orientations> filterPossibleMovements(LinkedList<Orientations> possibleOrientations, Position pos,EntityPassiveItem item) {
 		List<PipeItemTeleport> TempTeleport = getConnectedPipes(false);
 		LinkedList<Orientations> result = new LinkedList<Orientations>();
-		//System.out.print("Pos: " + pos.toString() + "\n");
+		////System.out.print("Pos: " + pos.toString() + "\n");
 		if (TempTeleport.size() <= 0)
 		{
 			result.add(pos.orientation.reverse());
@@ -130,14 +133,14 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 		int i = pipeRand.nextInt(TempTeleport.size());
 
 		LinkedList<Orientations> Temp = TempTeleport.get(i).getRealPossibleMovements(TempTeleport.get(i).getPosition(), item);
-		//System.out.println("Temp: " + Temp.size());
+		////System.out.println("Temp: " + Temp.size());
 		if (Temp.size() <= 0) {
 			result.add(pos.orientation.reverse());
 			return result;
 		}
 
 		Orientations newPos = Temp.get(worldObj.rand.nextInt(Temp.size()));
-		//System.out.println(newPos.toString());
+		////System.out.println(newPos.toString());
 		Position destPos = new Position(TempTeleport.get(i).xCoord, TempTeleport.get(i).yCoord, TempTeleport.get(i).zCoord, newPos);
 		destPos.moveForwards(1.0);
 
