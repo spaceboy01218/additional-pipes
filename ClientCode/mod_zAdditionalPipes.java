@@ -422,7 +422,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "Rev26";
+		return "Rev27";
 	}
 	@Override
 	public void HandlePacket(Packet230ModLoader packet) {

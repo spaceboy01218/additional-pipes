@@ -25,7 +25,6 @@ import net.minecraft.src.buildcraft.zeldo.pipes.PipeLiquidsTeleport;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipePowerTeleport;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.Property;
-import net.minecraft.src.BuildCraftCore;
 
 
 
@@ -146,27 +145,66 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public mod_zAdditionalPipes() {
 		ModLoader.SetInGameHook(this, true, true);
 	}
+	
+	public static List<chunkXZ> chunksToAdd = new ArrayList<chunkXZ>();
+	public static List<chunkXZ> chunksToRemove = new ArrayList<chunkXZ>();
 	public void OnTickInGame(MinecraftServer minecraft)
 	{
-		if (System.currentTimeMillis() - chunkTestTime >= lastCheckTime) {
-			lastCheckTime = System.currentTimeMillis();
-			Iterator<net.minecraft.src.mod_zAdditionalPipes.chunkXZ> chunks = keepLoadedChunks.iterator();
-			while (chunks.hasNext()) {
-				chunkXZ curChunk = (chunkXZ)chunks.next();
-				if (minecraft.worldMngr[0].chunkProvider.chunkExists(curChunk.x,curChunk.z)) {
-					//System.out.print("A: " + minecraft.worldMngr[0].chunkProvider.provideChunk(curChunk.x,curChunk.z).isChunkLoaded + "\n");
-				} else {
-					//System.out.print("Does not exist...\n");
-					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x,curChunk.z);
-					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x+1,curChunk.z);
-					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x-1,curChunk.z);
-					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x,curChunk.z+1);
-					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x,curChunk.z-1);
-					//ModLoaderMp.sendChatToAll("Loaded Chunk @ " + curChunk.x + "," + curChunk.z);
-				}
-			}
-
-		}
+//		if (System.currentTimeMillis() - chunkTestTime >= lastCheckTime) {
+//			lastCheckTime = System.currentTimeMillis();
+//			Iterator<net.minecraft.src.mod_zAdditionalPipes.chunkXZ> chunks = keepLoadedChunks.iterator();
+//			while (chunks.hasNext()) {
+//				chunkXZ curChunk = (chunkXZ)chunks.next();
+//				if (minecraft.worldMngr[0].chunkProvider.chunkExists(curChunk.x,curChunk.z)) {
+//					//System.out.print("A: " + minecraft.worldMngr[0].chunkProvider.provideChunk(curChunk.x,curChunk.z).isChunkLoaded + "\n");
+//				} else {
+//					//System.out.print("Does not exist...\n");
+//					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x,curChunk.z);
+//					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x+1,curChunk.z);
+//					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x-1,curChunk.z);
+//					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x,curChunk.z+1);
+//					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x,curChunk.z-1);
+//					//ModLoaderMp.sendChatToAll("Loaded Chunk @ " + curChunk.x + "," + curChunk.z);
+//				}
+//			}
+//
+//		}
+		
+		if(System.currentTimeMillis() - (long)chunkTestTime >= lastCheckTime)
+        {
+        	lastCheckTime = System.currentTimeMillis();
+        	Iterator iterator = chunksToRemove.iterator();
+        	
+        	 while (iterator.hasNext())
+             {
+                 chunkXZ chunkxz = (chunkXZ)iterator.next();
+                 MutiPlayerProxy.DeleteChunkFromList2(chunkxz.x, chunkxz.z);
+             }
+        	 chunksToRemove.clear();
+        	 iterator = chunksToAdd.iterator();
+         	
+        	 while (iterator.hasNext())
+             {
+                 chunkXZ chunkxz = (chunkXZ)iterator.next();
+                 MutiPlayerProxy.AddChunkToList2(chunkxz.x, chunkxz.z);
+             }
+        	chunksToAdd.clear();
+            
+            iterator = keepLoadedChunks.iterator();
+            while (iterator.hasNext())
+            {
+                chunkXZ chunkxz = (chunkXZ)iterator.next();
+                if(!minecraft.worldMngr[0].chunkProvider.chunkExists(chunkxz.x, chunkxz.z))
+                {
+                	minecraft.worldMngr[0].chunkProvider.loadChunk(chunkxz.x, chunkxz.z);
+                	minecraft.worldMngr[0].chunkProvider.loadChunk(chunkxz.x + 1, chunkxz.z);
+                	minecraft.worldMngr[0].chunkProvider.loadChunk(chunkxz.x - 1, chunkxz.z);
+                	minecraft.worldMngr[0].chunkProvider.loadChunk(chunkxz.x, chunkxz.z + 1);
+                	minecraft.worldMngr[0].chunkProvider.loadChunk(chunkxz.x, chunkxz.z - 1);
+                }
+            }
+        }
+		
 	}
 	public static File getSaveDirectory() {
 		return new File((new PropertyManager(new File("server.properties"))).getStringProperty("level-name", "world"));
@@ -234,7 +272,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "Rev26";
+		return "Rev27";
 	}
 
 	public void HandlePacket(Packet230ModLoader packet, EntityPlayerMP player) {

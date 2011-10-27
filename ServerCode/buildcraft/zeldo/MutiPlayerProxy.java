@@ -82,23 +82,46 @@ public class MutiPlayerProxy {
 	{
 		return true;
 	}
-	public static void AddChunkToList(int x, int z) {
-		MutiPlayerProxy.LoadChunkData();
-		x = x >> 4;
-		z = z >> 4;
-		Iterator<chunkXZ> chunks = mod_zAdditionalPipes.keepLoadedChunks.iterator();
-		while (chunks.hasNext()) {
-			chunkXZ curChunk = (chunkXZ)chunks.next();
-			if (curChunk.x == x && curChunk.z == z) {
-				//System.out.println("Didn't need to add PermChunk @ " + x + "," + z);
-				return;
-			}
+//	public static void AddChunkToList(int x, int z) {
+//		MutiPlayerProxy.LoadChunkData();
+//		x = x >> 4;
+//		z = z >> 4;
+//		Iterator<chunkXZ> chunks = mod_zAdditionalPipes.keepLoadedChunks.iterator();
+//		while (chunks.hasNext()) {
+//			chunkXZ curChunk = (chunkXZ)chunks.next();
+//			if (curChunk.x == x && curChunk.z == z) {
+//				//System.out.println("Didn't need to add PermChunk @ " + x + "," + z);
+//				return;
+//			}
+//
+//		}
+//		mod_zAdditionalPipes.keepLoadedChunks.add(new mod_zAdditionalPipes.chunkXZ(x, z));
+//		//System.out.println("Added PermChunk @ " + x + "," + z);
+//		SaveChunkData();
+//	}
+	
+	public static void AddChunkToList(int i, int j)
+    {
+    	mod_zAdditionalPipes.chunksToAdd.add(new chunkXZ(i, j));
+    }
+    public static void AddChunkToList2(int i, int j)
+    {
+        LoadChunkData();
+        i >>= 4;
+        j >>= 4;
+        for(Iterator iterator = mod_zAdditionalPipes.keepLoadedChunks.iterator(); iterator.hasNext();)
+        {
+            mod_zAdditionalPipes.chunkXZ chunkxz = (mod_zAdditionalPipes.chunkXZ)iterator.next();
+            if(chunkxz.x == i && chunkxz.z == j)
+            {
+                return;
+            }
+        }
 
-		}
-		mod_zAdditionalPipes.keepLoadedChunks.add(new mod_zAdditionalPipes.chunkXZ(x, z));
-		//System.out.println("Added PermChunk @ " + x + "," + z);
-		SaveChunkData();
-	}
+        mod_zAdditionalPipes.keepLoadedChunks.add(new mod_zAdditionalPipes.chunkXZ(i, j));
+        SaveChunkData();
+    }
+    
 	public static void SaveChunkData() {
 		try {
 
@@ -133,22 +156,45 @@ public class MutiPlayerProxy {
 			e.printStackTrace();
 		}
 	}
-	public static void DeleteChunkFromList(int x, int z) {
-		MutiPlayerProxy.LoadChunkData();
-		x = x >> 4;
-		z = z >> 4;
-		Iterator<chunkXZ> chunks = mod_zAdditionalPipes.keepLoadedChunks.iterator();
-		while (chunks.hasNext()) {
-			chunkXZ curChunk = (chunkXZ)chunks.next();
-			if (curChunk.x == x && curChunk.z == z) {
-				mod_zAdditionalPipes.keepLoadedChunks.remove(curChunk);
-				//System.out.println("Removed PermChunk @ " + x + "," + z);
-				SaveChunkData();
-				return;
-			}
-
-		}
-	}
+//	public static void DeleteChunkFromList(int x, int z) {
+//		MutiPlayerProxy.LoadChunkData();
+//		x = x >> 4;
+//		z = z >> 4;
+//		Iterator<chunkXZ> chunks = mod_zAdditionalPipes.keepLoadedChunks.iterator();
+//		while (chunks.hasNext()) {
+//			chunkXZ curChunk = (chunkXZ)chunks.next();
+//			if (curChunk.x == x && curChunk.z == z) {
+//				mod_zAdditionalPipes.keepLoadedChunks.remove(curChunk);
+//				//System.out.println("Removed PermChunk @ " + x + "," + z);
+//				SaveChunkData();
+//				return;
+//			}
+//
+//		}
+//	}
+	
+	public static void DeleteChunkFromList(int i, int j)
+    {
+    	mod_zAdditionalPipes.chunksToRemove.add(new chunkXZ(i, j));
+    }
+    public static void DeleteChunkFromList2(int i, int j)
+    {
+        LoadChunkData();
+        i >>= 4;
+        j >>= 4;
+        for(Iterator iterator = mod_zAdditionalPipes.keepLoadedChunks.iterator(); iterator.hasNext();)
+        {
+            mod_zAdditionalPipes.chunkXZ chunkxz = (mod_zAdditionalPipes.chunkXZ)iterator.next();
+            if(chunkxz.x == i && chunkxz.z == j)
+            {
+                mod_zAdditionalPipes.keepLoadedChunks.remove(chunkxz);
+                SaveChunkData();
+                return;
+            }
+        }
+    }
+    
+    
 	public static File getChunkSaveFile() {
 		//With MC being dumb we have to load the world location ourselfs
 		if (WorldDir == null)
