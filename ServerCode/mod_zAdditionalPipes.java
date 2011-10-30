@@ -14,6 +14,7 @@ import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
+import net.minecraft.src.buildcraft.zeldo.ChunkLoader.BlockChunkLoader;
 import net.minecraft.src.buildcraft.zeldo.logic.PipeLogicAdvancedWood;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemTeleport;
 import net.minecraft.src.buildcraft.zeldo.pipes.PipeItemsAdvancedInsertion;
@@ -123,7 +124,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	
 	public static int CurrentGUICount = 0;
 
-
+	public static Block blockChunkLoader;
 
 	private static Configuration config;
 	public int mpOilGuiId = -113;
@@ -237,6 +238,12 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		pipeRedStone = createPipe(mod_zAdditionalPipes.DEFUALT_RedStone_ID, PipeItemsRedstone.class, "Redstone Transport Pipe", Item.redstone, Block.glass, Item.redstone, null);
 		pipeRedStoneLiquid = createPipe (mod_zAdditionalPipes.DEFUALT_RedStoneLiquid_ID, PipeLiquidsRedstone.class, "Waterproof Redstone Pipe", BuildCraftTransport.pipeWaterproof, pipeRedStone, null, null);
 		
+		//ChunkLoader
+				blockChunkLoader = new BlockChunkLoader();
+				ModLoader.RegisterBlock(blockChunkLoader);
+				CraftingManager.getInstance().addShapelessRecipe(new ItemStack(blockChunkLoader, 1), new Object[] {Item.ingotIron,Item.ingotIron,Item.ingotIron,Item.ingotIron});
+				//Finish ChunkLoader
+				
 		if (allowWPRemove)
 		{
 			CraftingManager craftingmanager = CraftingManager.getInstance();
