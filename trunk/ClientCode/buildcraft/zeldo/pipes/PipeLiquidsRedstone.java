@@ -9,7 +9,9 @@
 package net.minecraft.src.buildcraft.zeldo.pipes;
 
 import net.minecraft.src.BuildCraftTransport;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
 import net.minecraft.src.mod_zAdditionalPipes;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
 import net.minecraft.src.buildcraft.api.IPipeEntry;
@@ -17,11 +19,12 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.buildcraft.api.Position;
 import net.minecraft.src.buildcraft.api.TileNetworkData;
 import net.minecraft.src.buildcraft.core.Utils;
+import net.minecraft.src.buildcraft.transport.IPipeProvideRedstonePowerHook;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.PipeLogicGold;
 import net.minecraft.src.buildcraft.transport.PipeTransportLiquids;
 
-public class PipeLiquidsRedstone extends Pipe {
+public class PipeLiquidsRedstone extends Pipe implements IPipeProvideRedstonePowerHook {
 	private @TileNetworkData int nextTexture = mod_zAdditionalPipes.DEFUALT_RedStoneLiquid_TEXTURE;
 	public @TileNetworkData boolean isPowering = false;
 	public PipeLiquidsRedstone(int itemID) {
@@ -131,5 +134,16 @@ public class PipeLiquidsRedstone extends Pipe {
 		}
 
 		return false;
+	}
+
+	@Override
+	public boolean isPoweringTo(IBlockAccess iblockaccess, int i, int j, int k,
+			int l) {
+		return isPoweringTo(l);
+	}
+
+	@Override
+	public boolean isIndirectlyPoweringTo(World world, int i, int j, int k, int l) {
+		return isIndirectlyPoweringTo(l);
 	}
 }

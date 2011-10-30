@@ -17,6 +17,7 @@ import net.minecraft.src.buildcraft.transport.BlockGenericPipe;
 import net.minecraft.src.buildcraft.transport.Pipe;
 import net.minecraft.src.buildcraft.transport.TileGenericPipe;
 import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
+import net.minecraft.src.buildcraft.zeldo.ChunkLoader.BlockChunkLoader;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiAdvancedWoodPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiDistributionPipe;
 import net.minecraft.src.buildcraft.zeldo.gui.GuiItemTeleportPipe;
@@ -112,6 +113,8 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static String DEFUALT_RedStoneLiquid_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/RSL.png";
 	public static String DEFUALT_RedStoneLiquid_FILE_POWERED = "/net/minecraft/src/buildcraft/zeldo/gui/RSLP.png";
 
+	public static Block blockChunkLoader;
+
 	//Redstone ticker
 
 	//GUI Packet Ids
@@ -173,26 +176,33 @@ public class mod_zAdditionalPipes extends BaseModMp {
 				lasers_showing = true;
 				for (int i=0; i<keepLoadedChunks.size(); i++)
 				{
-					Box temp[] = new Box[5];
+					Box temp[] = {new Box(),new Box(),new Box(),new Box(),new Box()};
+					Box InsideLasers[] = {new Box(),new Box(),new Box(),new Box(),new Box()}; //new Box[5];
 
 					int y = (int) mc.thePlayer.posY;
-					temp[0] = new Box();
-					temp[1] = new Box();
-					temp[2] = new Box();
-					temp[3] = new Box();
-					temp[4] = new Box();
 
 					temp[0].initialize(keepLoadedChunks.get(i).x * 16, y, keepLoadedChunks.get(i).z * 16, keepLoadedChunks.get(i).x * 16 + 16, y, keepLoadedChunks.get(i).z * 16 + 16);
-					temp[1].initialize((keepLoadedChunks.get(i).x - 1) * 16, y, keepLoadedChunks.get(i).z * 16, (keepLoadedChunks.get(i).x - 1) * 16 + 16, y, keepLoadedChunks.get(i).z * 16 + 16);
-					temp[2].initialize((keepLoadedChunks.get(i).x + 1) * 16, y, keepLoadedChunks.get(i).z * 16, (keepLoadedChunks.get(i).x + 1) * 16 + 16, y, keepLoadedChunks.get(i).z * 16 + 16);
-					temp[3].initialize(keepLoadedChunks.get(i).x * 16, y, (keepLoadedChunks.get(i).z + 1) * 16, keepLoadedChunks.get(i).x * 16 + 16, y, (keepLoadedChunks.get(i).z + 1) * 16 + 16);
-					temp[4].initialize(keepLoadedChunks.get(i).x * 16, y, (keepLoadedChunks.get(i).z - 1) * 16, keepLoadedChunks.get(i).x * 16 + 16, y, (keepLoadedChunks.get(i).z - 1) * 16 + 16);
+					InsideLasers[0].initialize(keepLoadedChunks.get(i).x * 16 + 7, y, keepLoadedChunks.get(i).z * 16 + 7, keepLoadedChunks.get(i).x * 16 + 9, y, keepLoadedChunks.get(i).z * 16 + 9);
 
-					for (int a=0; a< temp.length; a++)
+					temp[1].initialize((keepLoadedChunks.get(i).x - 1) * 16, y, keepLoadedChunks.get(i).z * 16, (keepLoadedChunks.get(i).x - 1) * 16 + 16, y, keepLoadedChunks.get(i).z * 16 + 16);
+					InsideLasers[1].initialize((keepLoadedChunks.get(i).x - 1) * 16+7, y, keepLoadedChunks.get(i).z * 16+7, (keepLoadedChunks.get(i).x - 1) * 16 + 9, y, keepLoadedChunks.get(i).z * 16 + 9);
+
+					temp[2].initialize((keepLoadedChunks.get(i).x + 1) * 16, y, keepLoadedChunks.get(i).z * 16, (keepLoadedChunks.get(i).x + 1) * 16 + 16, y, keepLoadedChunks.get(i).z * 16 + 16);
+					InsideLasers[2].initialize((keepLoadedChunks.get(i).x + 1) * 16+7, y, keepLoadedChunks.get(i).z * 16+7, (keepLoadedChunks.get(i).x + 1) * 16 + 9, y, keepLoadedChunks.get(i).z * 16 + 9);
+
+					temp[3].initialize(keepLoadedChunks.get(i).x * 16, y, (keepLoadedChunks.get(i).z + 1) * 16, keepLoadedChunks.get(i).x * 16 + 16, y, (keepLoadedChunks.get(i).z + 1) * 16 + 16);
+					InsideLasers[3].initialize(keepLoadedChunks.get(i).x * 16+7, y, (keepLoadedChunks.get(i).z + 1) * 16+7, keepLoadedChunks.get(i).x * 16 + 9, y, (keepLoadedChunks.get(i).z + 1) * 16 + 9);
+
+					temp[4].initialize(keepLoadedChunks.get(i).x * 16, y, (keepLoadedChunks.get(i).z - 1) * 16, keepLoadedChunks.get(i).x * 16 + 16, y, (keepLoadedChunks.get(i).z - 1) * 16 + 16);
+					InsideLasers[4].initialize(keepLoadedChunks.get(i).x * 16+7, y, (keepLoadedChunks.get(i).z - 1) * 16+7, keepLoadedChunks.get(i).x * 16 + 9, y, (keepLoadedChunks.get(i).z - 1) * 16 + 9);
+
+					for (int a=0; a<temp.length; a++)
 					{
 						if (!laser_box.contains(temp[a])) { //Dont want to display the same one 6 times now do we? :p
 							temp[a].createLasers(mc.theWorld, LaserKind.Blue);
+							InsideLasers[a].createLasers(mc.theWorld, LaserKind.Red);
 							laser_box.add(temp[a]);
+							laser_box.add(InsideLasers[a]);
 						}
 					}
 
@@ -220,6 +230,8 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		ModLoader.RegisterKey(this, this.key_lasers, false);
 		ModLoader.AddLocalization("key_lasers", "Turn on/off chunk loader boundries");
 	}
+
+
 	@Override
 	public boolean OnTickInGame(Minecraft minecraft)
 	{
@@ -249,25 +261,33 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		}
 		return true;
 	}
+
+	public boolean wasMutiPlayer = false;
 	@Override
 	public boolean OnTickInGUI(Minecraft minecraft, GuiScreen guiscreen)
 	{
-
-		//System.out.print("World: " + (minecraft.theWorld == null) + "\n");
 		if (minecraft.theWorld == null)
 		{
 
 			if (isInGame)
 			{
-				//System.out.print("Cleared TeleportPipes...\n");
-				PipeItemTeleport.ItemTeleportPipes.clear();
-				PipeLiquidsTeleport.LiquidTeleportPipes.clear();
-				PipePowerTeleport.PowerTeleportPipes.clear();
-				keepLoadedChunks.clear();
-				MutiPlayerProxy.NeedsLoad = true;
+				if (!wasMutiPlayer)
+				{
+					System.out.print("Cleared TeleportPipes...\n");
+					PipeItemTeleport.ItemTeleportPipes.clear();
+					PipeLiquidsTeleport.LiquidTeleportPipes.clear();
+					PipePowerTeleport.PowerTeleportPipes.clear();
+					keepLoadedChunks.clear();
+					MutiPlayerProxy.NeedsLoad = true;
+					isInGame = true;
+				} else
+				{
+					System.out.println("MutiPlayer, Not Clearing");
+				}
 				isInGame = false;
 			}
 		} else {
+			wasMutiPlayer = minecraft.theWorld.multiplayerWorld;
 			isInGame = true;
 		}
 		return true;
@@ -312,6 +332,15 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		MinecraftForgeClient.registerCustomItemRenderer(pipeAdvancedInsertion.shiftedIndex, mod_BuildCraftTransport.instance);
 		MinecraftForgeClient.registerCustomItemRenderer(pipeRedStone.shiftedIndex, mod_BuildCraftTransport.instance);
 		MinecraftForgeClient.registerCustomItemRenderer(pipeRedStoneLiquid.shiftedIndex, mod_BuildCraftTransport.instance);
+
+
+		//ChunkLoader
+		blockChunkLoader = new BlockChunkLoader();
+		ModLoader.RegisterBlock(blockChunkLoader);
+		blockChunkLoader.setBlockName("ChunkLoading Block");
+		ModLoader.AddName(blockChunkLoader, "ChunkLoading Block");
+		CraftingManager.getInstance().addShapelessRecipe(new ItemStack(blockChunkLoader, 1), new Object[] {Item.ingotIron,Item.ingotIron,Item.ingotIron,Item.ingotIron});
+		//Finish ChunkLoader
 
 		if (allowWPRemove)
 		{
@@ -422,7 +451,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "Rev27";
+		return "Rev28";
 	}
 	@Override
 	public void HandlePacket(Packet230ModLoader packet) {
