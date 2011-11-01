@@ -62,7 +62,7 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 			if (!(worldObj.getBlockTileEntity(LiquidTeleportPipes.get(i).xCoord, LiquidTeleportPipes.get(i).yCoord, LiquidTeleportPipes.get(i).zCoord) instanceof TileGenericPipe)) {
 				//System.out.println("Removed: " + i);
 				toRemove.add(LiquidTeleportPipes.get(i));
-				MutiPlayerProxy.DeleteChunkFromList(LiquidTeleportPipes.get(i).xCoord, LiquidTeleportPipes.get(i).zCoord);
+				//MutiPlayerProxy.DeleteChunkFromList(LiquidTeleportPipes.get(i).xCoord, LiquidTeleportPipes.get(i).zCoord);
 			}
 		}
 
@@ -82,7 +82,7 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 		LiquidTeleportPipes.removeAll(toRemove);
 		LiquidTeleportPipes.add(this);
 		super.setPosition(xCoord, yCoord, zCoord);
-		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
+		//MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 	}
 
 	public List<PipeLiquidsTeleport> getConnectedPipes(boolean ignoreReceive) {
@@ -107,7 +107,7 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
-		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
+		//MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 		nbttagcompound.setInteger("Freq", myFreq);
 		nbttagcompound.setBoolean("Rec", canReceive);
 		nbttagcompound.setString("Owner", Owner);
@@ -116,7 +116,7 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
-		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
+		//MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 		myFreq = nbttagcompound.getInteger("Freq");
 		canReceive = nbttagcompound.getBoolean("Rec");
 		Owner = nbttagcompound.getString("Owner");

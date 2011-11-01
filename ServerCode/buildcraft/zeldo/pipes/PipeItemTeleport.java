@@ -59,7 +59,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 			if (!(worldObj.getBlockTileEntity(ItemTeleportPipes.get(i).xCoord, ItemTeleportPipes.get(i).yCoord, ItemTeleportPipes.get(i).zCoord) instanceof TileGenericPipe)) {
 				//System.out.println("Removed: " + i + " - Class: " + worldObj.getBlockTileEntity(ItemTeleportPipes.get(i).xCoord, ItemTeleportPipes.get(i).yCoord, ItemTeleportPipes.get(i).zCoord).getClass().getName());
 				toRemove.add(ItemTeleportPipes.get(i));
-				MutiPlayerProxy.DeleteChunkFromList(ItemTeleportPipes.get(i).xCoord, ItemTeleportPipes.get(i).zCoord);
+				//MutiPlayerProxy.DeleteChunkFromList(ItemTeleportPipes.get(i).xCoord, ItemTeleportPipes.get(i).zCoord);
 			}
 		}
 		ItemTeleportPipes.removeAll(toRemove);
@@ -81,7 +81,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 		ItemTeleportPipes.removeAll(toRemove);
 		ItemTeleportPipes.add(this);
 		super.setPosition(xCoord, yCoord, zCoord);
-		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
+		//MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 	}
 	public List<PipeItemTeleport> getConnectedPipes(boolean ignoreReceive) {
 		List<PipeItemTeleport> Temp = new LinkedList<PipeItemTeleport>();
@@ -242,7 +242,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
-		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
+		//MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 		nbttagcompound.setInteger("Freq", myFreq);
 		nbttagcompound.setBoolean("Rec", canReceive);
 		nbttagcompound.setString("Owner", Owner);
@@ -251,7 +251,7 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
-		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
+		//MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 		myFreq = nbttagcompound.getInteger("Freq");
 		canReceive = nbttagcompound.getBoolean("Rec");
 		Owner = nbttagcompound.getString("Owner");
