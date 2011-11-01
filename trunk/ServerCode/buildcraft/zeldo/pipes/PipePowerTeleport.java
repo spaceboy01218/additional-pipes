@@ -217,11 +217,11 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 			if (!(worldObj.getBlockTileEntity(PowerTeleportPipes.get(i).xCoord, PowerTeleportPipes.get(i).yCoord, PowerTeleportPipes.get(i).zCoord) instanceof TileGenericPipe)) {
 				//System.out.println("Removed: " + i);
 				toRemove.add(PowerTeleportPipes.get(i));
-				MutiPlayerProxy.DeleteChunkFromList(PowerTeleportPipes.get(i).xCoord, PowerTeleportPipes.get(i).zCoord);
+				//MutiPlayerProxy.DeleteChunkFromList(PowerTeleportPipes.get(i).xCoord, PowerTeleportPipes.get(i).zCoord);
 			}
 		}
 		PowerTeleportPipes.removeAll(toRemove);
-		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
+		//MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 	}
 	@Override
 	public void setPosition (int xCoord, int yCoord, int zCoord) {
@@ -235,12 +235,12 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 		PowerTeleportPipes.removeAll(toRemove);
 		PowerTeleportPipes.add(this);
 		super.setPosition(xCoord, yCoord, zCoord);
-		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
+		//MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 	}
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
-		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
+		//MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 		nbttagcompound.setInteger("Freq", myFreq);
 		nbttagcompound.setBoolean("Rec", canReceive);
 		nbttagcompound.setString("Owner", Owner);
@@ -249,7 +249,7 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 	@Override
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
-		MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
+		//MutiPlayerProxy.AddChunkToList(xCoord, zCoord);
 		myFreq = nbttagcompound.getInteger("Freq");
 		canReceive = nbttagcompound.getBoolean("Rec");
 		Owner = nbttagcompound.getString("Owner");

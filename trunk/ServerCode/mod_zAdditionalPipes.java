@@ -83,7 +83,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static Item pipeAdvancedInsertion;
 	public static int DEFUALT_Insertion_ID = 4044;
 	public static int DEFUALT_Insertion_TEXTURE = 8;
-	
+
 	//Redstone
 	public static Item pipeRedStone;
 	public static int DEFUALT_RedStone_ID = 4043;
@@ -91,14 +91,14 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static int DEFUALT_RedStone_TEXTURE_POWERED = 8*16+5;
 	public static String DEFUALT_RedStone_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/RS.png";
 	public static String DEFUALT_RedStone_FILE_POWERED = "/net/minecraft/src/buildcraft/zeldo/gui/RSP.png";
-	
+
 	//Redstone Liquid
-		public static Item pipeRedStoneLiquid;
-		public static int DEFUALT_RedStoneLiquid_ID = 4042;
-		public static int DEFUALT_RedStoneLiquid_TEXTURE = 8*16+1;
-		public static int DEFUALT_RedStoneLiquid_TEXTURE_POWERED = 8*16+15;
-		public static String DEFUALT_RedStoneLiquid_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/RSL.png";
-		public static String DEFUALT_RedStoneLiquid_FILE_POWERED = "/net/minecraft/src/buildcraft/zeldo/gui/RSLP.png";
+	public static Item pipeRedStoneLiquid;
+	public static int DEFUALT_RedStoneLiquid_ID = 4042;
+	public static int DEFUALT_RedStoneLiquid_TEXTURE = 8*16+1;
+	public static int DEFUALT_RedStoneLiquid_TEXTURE_POWERED = 8*16+15;
+	public static String DEFUALT_RedStoneLiquid_FILE = "/net/minecraft/src/buildcraft/zeldo/gui/RSL.png";
+	public static String DEFUALT_RedStoneLiquid_FILE_POWERED = "/net/minecraft/src/buildcraft/zeldo/gui/RSLP.png";
 
 	//GUI Packet Ids
 	public static int GUI_ITEM_SEND = 255;
@@ -121,7 +121,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static int PACKET_GUI_COUNT = 8;
 	public static int PACKET_OPEN_GUI = 9;
 	public static int PACKET_SET_DIST = 10;
-	
+
 	public static int CurrentGUICount = 0;
 
 	public static Block blockChunkLoader;
@@ -142,70 +142,89 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static List<chunkXZ> keepLoadedChunks = new ArrayList<chunkXZ>();
 
 	public static List<Integer> pipeIds = new LinkedList<Integer>();
-	
+
 	public mod_zAdditionalPipes() {
 		ModLoader.SetInGameHook(this, true, true);
 	}
-	
+
 	public static List<chunkXZ> chunksToAdd = new ArrayList<chunkXZ>();
 	public static List<chunkXZ> chunksToRemove = new ArrayList<chunkXZ>();
 	public void OnTickInGame(MinecraftServer minecraft)
 	{
-//		if (System.currentTimeMillis() - chunkTestTime >= lastCheckTime) {
-//			lastCheckTime = System.currentTimeMillis();
-//			Iterator<net.minecraft.src.mod_zAdditionalPipes.chunkXZ> chunks = keepLoadedChunks.iterator();
-//			while (chunks.hasNext()) {
-//				chunkXZ curChunk = (chunkXZ)chunks.next();
-//				if (minecraft.worldMngr[0].chunkProvider.chunkExists(curChunk.x,curChunk.z)) {
-//					//System.out.print("A: " + minecraft.worldMngr[0].chunkProvider.provideChunk(curChunk.x,curChunk.z).isChunkLoaded + "\n");
-//				} else {
-//					//System.out.print("Does not exist...\n");
-//					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x,curChunk.z);
-//					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x+1,curChunk.z);
-//					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x-1,curChunk.z);
-//					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x,curChunk.z+1);
-//					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x,curChunk.z-1);
-//					//ModLoaderMp.sendChatToAll("Loaded Chunk @ " + curChunk.x + "," + curChunk.z);
-//				}
-//			}
-//
-//		}
-		
+		//		if (System.currentTimeMillis() - chunkTestTime >= lastCheckTime) {
+		//			lastCheckTime = System.currentTimeMillis();
+		//			Iterator<net.minecraft.src.mod_zAdditionalPipes.chunkXZ> chunks = keepLoadedChunks.iterator();
+		//			while (chunks.hasNext()) {
+		//				chunkXZ curChunk = (chunkXZ)chunks.next();
+		//				if (minecraft.worldMngr[0].chunkProvider.chunkExists(curChunk.x,curChunk.z)) {
+		//					//System.out.print("A: " + minecraft.worldMngr[0].chunkProvider.provideChunk(curChunk.x,curChunk.z).isChunkLoaded + "\n");
+		//				} else {
+		//					//System.out.print("Does not exist...\n");
+		//					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x,curChunk.z);
+		//					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x+1,curChunk.z);
+		//					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x-1,curChunk.z);
+		//					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x,curChunk.z+1);
+		//					minecraft.worldMngr[0].chunkProvider.loadChunk(curChunk.x,curChunk.z-1);
+		//					//ModLoaderMp.sendChatToAll("Loaded Chunk @ " + curChunk.x + "," + curChunk.z);
+		//				}
+		//			}
+		//
+		//		}
+
 		if(System.currentTimeMillis() - (long)chunkTestTime >= lastCheckTime)
-        {
-        	lastCheckTime = System.currentTimeMillis();
-        	Iterator iterator = chunksToRemove.iterator();
-        	
-        	 while (iterator.hasNext())
-             {
-                 chunkXZ chunkxz = (chunkXZ)iterator.next();
-                 MutiPlayerProxy.DeleteChunkFromList2(chunkxz.x, chunkxz.z);
-             }
-        	 chunksToRemove.clear();
-        	 iterator = chunksToAdd.iterator();
-         	
-        	 while (iterator.hasNext())
-             {
-                 chunkXZ chunkxz = (chunkXZ)iterator.next();
-                 MutiPlayerProxy.AddChunkToList2(chunkxz.x, chunkxz.z);
-             }
-        	chunksToAdd.clear();
-            
-            iterator = keepLoadedChunks.iterator();
-            while (iterator.hasNext())
-            {
-                chunkXZ chunkxz = (chunkXZ)iterator.next();
-                if(!minecraft.worldMngr[0].chunkProvider.chunkExists(chunkxz.x, chunkxz.z))
-                {
-                	minecraft.worldMngr[0].chunkProvider.loadChunk(chunkxz.x, chunkxz.z);
-                	minecraft.worldMngr[0].chunkProvider.loadChunk(chunkxz.x + 1, chunkxz.z);
-                	minecraft.worldMngr[0].chunkProvider.loadChunk(chunkxz.x - 1, chunkxz.z);
-                	minecraft.worldMngr[0].chunkProvider.loadChunk(chunkxz.x, chunkxz.z + 1);
-                	minecraft.worldMngr[0].chunkProvider.loadChunk(chunkxz.x, chunkxz.z - 1);
-                }
-            }
-        }
-		
+		{
+			lastCheckTime = System.currentTimeMillis();
+
+
+			Iterator iterator = chunksToAdd.iterator();
+
+			while (iterator.hasNext())
+			{
+				chunkXZ chunkxz = (chunkXZ)iterator.next();
+				MutiPlayerProxy.AddChunkToList2(chunkxz.x, chunkxz.z);
+			}
+			chunksToAdd.clear();
+
+			iterator = chunksToRemove.iterator();
+
+			while (iterator.hasNext())
+			{
+				chunkXZ chunkxz = (chunkXZ)iterator.next();
+				MutiPlayerProxy.DeleteChunkFromList2(chunkxz.x, chunkxz.z);
+			}
+			chunksToRemove.clear();
+
+			iterator = keepLoadedChunks.iterator();
+			while (iterator.hasNext())
+			{
+				chunkXZ chunkxz = (chunkXZ)iterator.next();
+				if(!minecraft.worldMngr[0].chunkProvider.chunkExists(chunkxz.x, chunkxz.z))
+				{
+					minecraft.worldMngr[0].chunkProvider.loadChunk(chunkxz.x, chunkxz.z);
+				}
+
+				if(!minecraft.worldMngr[0].chunkProvider.chunkExists(chunkxz.x + 1, chunkxz.z))
+				{
+					minecraft.worldMngr[0].chunkProvider.loadChunk(chunkxz.x + 1, chunkxz.z);
+				}
+
+				if(!minecraft.worldMngr[0].chunkProvider.chunkExists(chunkxz.x - 1, chunkxz.z))
+				{
+					minecraft.worldMngr[0].chunkProvider.loadChunk(chunkxz.x - 1, chunkxz.z);
+				}
+
+				if(!minecraft.worldMngr[0].chunkProvider.chunkExists(chunkxz.x, chunkxz.z + 1))
+				{
+					minecraft.worldMngr[0].chunkProvider.loadChunk(chunkxz.x, chunkxz.z + 1);
+				}
+
+				if(!minecraft.worldMngr[0].chunkProvider.chunkExists(chunkxz.x, chunkxz.z - 1))
+				{
+					minecraft.worldMngr[0].chunkProvider.loadChunk(chunkxz.x, chunkxz.z - 1);
+				}
+			}
+		}
+
 	}
 	public static File getSaveDirectory() {
 		return new File((new PropertyManager(new File("server.properties"))).getStringProperty("level-name", "world"));
@@ -220,7 +239,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		lagFix = Boolean.parseBoolean(config.getOrCreateBooleanProperty("saveLagFix", Configuration.GENERAL_PROPERTY, false).value);
 		wrenchOpensGui = Boolean.parseBoolean(config.getOrCreateBooleanProperty("wrenchOpensGui", Configuration.GENERAL_PROPERTY, false).value);
 		allowWPRemove = Boolean.parseBoolean(config.getOrCreateBooleanProperty("EnableWaterProofRemoval", Configuration.GENERAL_PROPERTY, false).value);
-		
+
 		config.save();
 
 
@@ -237,29 +256,30 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		pipeAdvancedInsertion = createPipe(mod_zAdditionalPipes.DEFUALT_Insertion_ID, PipeItemsAdvancedInsertion.class, "Advanced Insertion Transport Pipe", Item.redstone, Block.stone, Block.glass, Block.stone);
 		pipeRedStone = createPipe(mod_zAdditionalPipes.DEFUALT_RedStone_ID, PipeItemsRedstone.class, "Redstone Transport Pipe", Item.redstone, Block.glass, Item.redstone, null);
 		pipeRedStoneLiquid = createPipe (mod_zAdditionalPipes.DEFUALT_RedStoneLiquid_ID, PipeLiquidsRedstone.class, "Waterproof Redstone Pipe", BuildCraftTransport.pipeWaterproof, pipeRedStone, null, null);
-		
+
 		//ChunkLoader
-				blockChunkLoader = new BlockChunkLoader();
-				ModLoader.RegisterBlock(blockChunkLoader);
-				CraftingManager.getInstance().addShapelessRecipe(new ItemStack(blockChunkLoader, 1), new Object[] {Item.ingotIron,Item.ingotIron,Item.ingotIron,Item.ingotIron});
-				//Finish ChunkLoader
-				
+		ModLoader.RegisterTileEntity(net.minecraft.src.buildcraft.zeldo.ChunkLoader.TileChunkLoader.class, "ChunkLoader");
+		blockChunkLoader = new BlockChunkLoader();
+		ModLoader.RegisterBlock(blockChunkLoader);
+		CraftingManager.getInstance().addShapelessRecipe(new ItemStack(blockChunkLoader, 1), new Object[] {Item.ingotIron,Item.ingotIron,Item.ingotIron,Item.ingotIron});
+		//Finish ChunkLoader
+
 		if (allowWPRemove)
 		{
 			CraftingManager craftingmanager = CraftingManager.getInstance();
-			
+
 			//Mine
 			craftingmanager.addRecipe(new ItemStack(pipeItemTeleport, 1), new Object[] {"A", Character.valueOf('A'), pipeLiquidTeleport});
 			craftingmanager.addRecipe(new ItemStack(pipeItemTeleport, 1), new Object[] {"A", Character.valueOf('A'), pipePowerTeleport});
 			craftingmanager.addRecipe(new ItemStack(pipeRedStone, 1), new Object[] {"A", Character.valueOf('A'), pipeRedStoneLiquid});
-			
+
 			//BC Liquid
 			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsCobblestone, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsCobblestone});
 			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsGold, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsGold});
 			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsIron, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsIron});
 			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsStone, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsStone});
 			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsWood, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipeLiquidsWood});
-			
+
 			//BC Power
 			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsGold, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipePowerGold});
 			craftingmanager.addRecipe(new ItemStack(BuildCraftTransport.pipeItemsStone, 1), new Object[] {"A", Character.valueOf('A'), BuildCraftTransport.pipePowerStone});
@@ -279,7 +299,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "Rev27";
+		return "Rev29";
 	}
 
 	public void HandlePacket(Packet230ModLoader packet, EntityPlayerMP player) {
@@ -497,7 +517,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 		return res;
 	}
-	
+
 	public static void RegisterPipeIds()
 	{
 		pipeIds.add(BuildCraftTransport.pipeItemsCobblestone.shiftedIndex);

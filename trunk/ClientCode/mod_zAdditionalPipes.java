@@ -220,6 +220,10 @@ public class mod_zAdditionalPipes extends BaseModMp {
 					delete.add(temp);
 				}
 				laser_box.removeAll(delete);
+				if (MutiPlayerProxy.isOnServer())
+				{
+					keepLoadedChunks.clear();
+				}
 			}
 		}
 	}
@@ -244,17 +248,30 @@ public class mod_zAdditionalPipes extends BaseModMp {
 			}
 			Iterator<chunkXZ> chunks = keepLoadedChunks.iterator();
 			while (chunks.hasNext()) {
-				chunkXZ curChunk = chunks.next();
-				if (minecraft.theWorld.chunkProvider.chunkExists(curChunk.x,curChunk.z)) {
-					//System.out.print("A: " + minecraft.theWorld.chunkProvider.provideChunk(curChunk.x,curChunk.z).isChunkLoaded + "\n");
-				} else {
-					//System.out.print("Does not exist...\n");
-					minecraft.theWorld.chunkProvider.provideChunk(curChunk.x,curChunk.z);
-					minecraft.theWorld.chunkProvider.provideChunk(curChunk.x-1,curChunk.z);
-					minecraft.theWorld.chunkProvider.provideChunk(curChunk.x+1,curChunk.z);
-					minecraft.theWorld.chunkProvider.provideChunk(curChunk.x,curChunk.z-1);
-					minecraft.theWorld.chunkProvider.provideChunk(curChunk.x,curChunk.z+1);
-					//System.out.println("Loaded Chunk @ " + curChunk.x + "," + curChunk.z);
+				chunkXZ chunkxz = chunks.next();
+				if(!minecraft.theWorld.chunkProvider.chunkExists(chunkxz.x, chunkxz.z))
+				{
+					minecraft.theWorld.chunkProvider.loadChunk(chunkxz.x, chunkxz.z);
+				}
+
+				if(!minecraft.theWorld.chunkProvider.chunkExists(chunkxz.x + 1, chunkxz.z))
+				{
+					minecraft.theWorld.chunkProvider.loadChunk(chunkxz.x + 1, chunkxz.z);
+				}
+
+				if(!minecraft.theWorld.chunkProvider.chunkExists(chunkxz.x - 1, chunkxz.z))
+				{
+					minecraft.theWorld.chunkProvider.loadChunk(chunkxz.x - 1, chunkxz.z);
+				}
+
+				if(!minecraft.theWorld.chunkProvider.chunkExists(chunkxz.x, chunkxz.z + 1))
+				{
+					minecraft.theWorld.chunkProvider.loadChunk(chunkxz.x, chunkxz.z + 1);
+				}
+
+				if(!minecraft.theWorld.chunkProvider.chunkExists(chunkxz.x, chunkxz.z - 1))
+				{
+					minecraft.theWorld.chunkProvider.loadChunk(chunkxz.x, chunkxz.z - 1);
 				}
 			}
 
@@ -335,6 +352,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 
 		//ChunkLoader
+		ModLoader.RegisterTileEntity(net.minecraft.src.buildcraft.zeldo.ChunkLoader.TileChunkLoader.class, "ChunkLoader");
 		blockChunkLoader = new BlockChunkLoader();
 		ModLoader.RegisterBlock(blockChunkLoader);
 		blockChunkLoader.setBlockName("ChunkLoading Block");
@@ -413,19 +431,26 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	@Override
 	public GuiScreen HandleGUI(int inventoryType)
 	{
-		//System.out.println("InvType: " + inventoryType);
-		if(inventoryType == GUI_LIQUID_REC)
-			return new GuiLiquidTeleportPipe((TileGenericPipe)ModLoader.getMinecraftInstance().theWorld.getBlockTileEntity(ModLoader.getMinecraftInstance().objectMouseOver.blockX, ModLoader.getMinecraftInstance().objectMouseOver.blockY, ModLoader.getMinecraftInstance().objectMouseOver.blockZ));
-		else if (inventoryType == GUI_ITEM_REC)
-			return new GuiItemTeleportPipe((TileGenericPipe)ModLoader.getMinecraftInstance().theWorld.getBlockTileEntity(ModLoader.getMinecraftInstance().objectMouseOver.blockX, ModLoader.getMinecraftInstance().objectMouseOver.blockY, ModLoader.getMinecraftInstance().objectMouseOver.blockZ));
-		else if (inventoryType == GUI_ENERGY_REC)
-			return new GuiPowerTeleportPipe((TileGenericPipe)ModLoader.getMinecraftInstance().theWorld.getBlockTileEntity(ModLoader.getMinecraftInstance().objectMouseOver.blockX, ModLoader.getMinecraftInstance().objectMouseOver.blockY, ModLoader.getMinecraftInstance().objectMouseOver.blockZ));
-		else if (inventoryType == GUI_ADVANCEDWOOD_REC)
+		try
 		{
-			TileGenericPipe tmp = new TileGenericPipe();
-			tmp.pipe = new PipeItemsAdvancedWood(pipeAdvancedWood.shiftedIndex);
-			return new GuiAdvancedWoodPipe(ModLoader.getMinecraftInstance().thePlayer.inventory, tmp, (TileGenericPipe)ModLoader.getMinecraftInstance().theWorld.getBlockTileEntity(ModLoader.getMinecraftInstance().objectMouseOver.blockX, ModLoader.getMinecraftInstance().objectMouseOver.blockY, ModLoader.getMinecraftInstance().objectMouseOver.blockZ));
+			//System.out.println("InvType: " + inventoryType);
+			if(inventoryType == GUI_LIQUID_REC)
+				return new GuiLiquidTeleportPipe((TileGenericPipe)ModLoader.getMinecraftInstance().theWorld.getBlockTileEntity(ModLoader.getMinecraftInstance().objectMouseOver.blockX, ModLoader.getMinecraftInstance().objectMouseOver.blockY, ModLoader.getMinecraftInstance().objectMouseOver.blockZ));
+			else if (inventoryType == GUI_ITEM_REC)
+				return new GuiItemTeleportPipe((TileGenericPipe)ModLoader.getMinecraftInstance().theWorld.getBlockTileEntity(ModLoader.getMinecraftInstance().objectMouseOver.blockX, ModLoader.getMinecraftInstance().objectMouseOver.blockY, ModLoader.getMinecraftInstance().objectMouseOver.blockZ));
+			else if (inventoryType == GUI_ENERGY_REC)
+				return new GuiPowerTeleportPipe((TileGenericPipe)ModLoader.getMinecraftInstance().theWorld.getBlockTileEntity(ModLoader.getMinecraftInstance().objectMouseOver.blockX, ModLoader.getMinecraftInstance().objectMouseOver.blockY, ModLoader.getMinecraftInstance().objectMouseOver.blockZ));
+			else if (inventoryType == GUI_ADVANCEDWOOD_REC)
+			{
+				TileGenericPipe tmp = new TileGenericPipe();
+				tmp.pipe = new PipeItemsAdvancedWood(pipeAdvancedWood.shiftedIndex);
 
+				return new GuiAdvancedWoodPipe(ModLoader.getMinecraftInstance().thePlayer.inventory, tmp, (TileGenericPipe)ModLoader.getMinecraftInstance().theWorld.getBlockTileEntity(ModLoader.getMinecraftInstance().objectMouseOver.blockX, ModLoader.getMinecraftInstance().objectMouseOver.blockY, ModLoader.getMinecraftInstance().objectMouseOver.blockZ));
+			}
+		} catch (Exception e)
+		{
+			System.out.println("Handled Error in HandleGUI...");
+			e.printStackTrace();
 		}
 
 
@@ -451,7 +476,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "Rev28";
+		return "Rev29";
 	}
 	@Override
 	public void HandlePacket(Packet230ModLoader packet) {
