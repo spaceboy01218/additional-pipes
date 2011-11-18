@@ -125,7 +125,8 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static int CurrentGUICount = 0;
 
 	public static Block blockChunkLoader;
-
+	public static int DEFUALT_CHUNK_LOADER_ID = 254;
+	
 	private static Configuration config;
 	public int mpOilGuiId = -113;
 	public int mpItemGuiId = -114;
@@ -240,7 +241,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		wrenchOpensGui = Boolean.parseBoolean(config.getOrCreateBooleanProperty("wrenchOpensGui", Configuration.GENERAL_PROPERTY, false).value);
 		allowWPRemove = Boolean.parseBoolean(config.getOrCreateBooleanProperty("EnableWaterProofRemoval", Configuration.GENERAL_PROPERTY, false).value);
 
-		config.save();
+		
 
 
 		//BuildCraftCore.customBuildCraftTexture = mod_AdditionalPipes.BUILDCRAFT_OVERRIDE_TEXTURE;
@@ -259,11 +260,15 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 		//ChunkLoader
 		ModLoader.RegisterTileEntity(net.minecraft.src.buildcraft.zeldo.ChunkLoader.TileChunkLoader.class, "ChunkLoader");
-		blockChunkLoader = new BlockChunkLoader();
+		int ChunkLoaderID = Integer.parseInt(config.getOrCreateIntProperty("ChunkLoader.id",Configuration.BLOCK_PROPERTY, DEFUALT_CHUNK_LOADER_ID).value);
+		blockChunkLoader = new BlockChunkLoader(ChunkLoaderID);
 		ModLoader.RegisterBlock(blockChunkLoader);
-		CraftingManager.getInstance().addShapelessRecipe(new ItemStack(blockChunkLoader, 1), new Object[] {Item.ingotIron,Item.ingotIron,Item.ingotIron,Item.ingotIron});
+		boolean Craftable = Boolean.parseBoolean(config.getOrCreateBooleanProperty("ChunkLoader.Enabled",Configuration.BLOCK_PROPERTY, true).value);
+		if (Craftable)
+			CraftingManager.getInstance().addShapelessRecipe(new ItemStack(blockChunkLoader, 1), new Object[] {Item.ingotIron,Item.ingotIron,Item.ingotIron,Item.ingotIron});
 		//Finish ChunkLoader
 
+		config.save();
 		if (allowWPRemove)
 		{
 			CraftingManager craftingmanager = CraftingManager.getInstance();
@@ -299,7 +304,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "Rev29";
+		return "Rev30";
 	}
 
 	public void HandlePacket(Packet230ModLoader packet, EntityPlayerMP player) {

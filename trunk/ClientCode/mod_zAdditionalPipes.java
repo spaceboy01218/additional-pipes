@@ -114,6 +114,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 	public static String DEFUALT_RedStoneLiquid_FILE_POWERED = "/net/minecraft/src/buildcraft/zeldo/gui/RSLP.png";
 
 	public static Block blockChunkLoader;
+	public static int DEFUALT_CHUNK_LOADER_ID = 254;
 
 	//Redstone ticker
 
@@ -325,7 +326,6 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		wrenchOpensGui = Boolean.parseBoolean(config.getOrCreateBooleanProperty("wrenchOpensGui", Configuration.GENERAL_PROPERTY, false).value);
 		allowWPRemove = Boolean.parseBoolean(config.getOrCreateBooleanProperty("EnableWaterProofRemoval", Configuration.GENERAL_PROPERTY, false).value);
 
-		config.save();
 
 		AddImageOverride();
 		MinecraftForgeClient.preloadTexture(mod_zAdditionalPipes.MASTER_TEXTURE_FILE);
@@ -353,12 +353,17 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 		//ChunkLoader
 		ModLoader.RegisterTileEntity(net.minecraft.src.buildcraft.zeldo.ChunkLoader.TileChunkLoader.class, "ChunkLoader");
-		blockChunkLoader = new BlockChunkLoader();
+		int ChunkLoaderID = Integer.parseInt(config.getOrCreateIntProperty("ChunkLoader.id",Configuration.BLOCK_PROPERTY, DEFUALT_CHUNK_LOADER_ID).value);
+		blockChunkLoader = new BlockChunkLoader(ChunkLoaderID);
 		ModLoader.RegisterBlock(blockChunkLoader);
 		blockChunkLoader.setBlockName("ChunkLoading Block");
 		ModLoader.AddName(blockChunkLoader, "ChunkLoading Block");
-		CraftingManager.getInstance().addShapelessRecipe(new ItemStack(blockChunkLoader, 1), new Object[] {Item.ingotIron,Item.ingotIron,Item.ingotIron,Item.ingotIron});
+		boolean Craftable = Boolean.parseBoolean(config.getOrCreateBooleanProperty("ChunkLoader.Enabled",Configuration.BLOCK_PROPERTY, true).value);
+		if (Craftable)
+			CraftingManager.getInstance().addShapelessRecipe(new ItemStack(blockChunkLoader, 1), new Object[] {Item.ingotIron,Item.ingotIron,Item.ingotIron,Item.ingotIron});
 		//Finish ChunkLoader
+
+		config.save();
 
 		if (allowWPRemove)
 		{
@@ -476,7 +481,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "Rev29";
+		return "Rev30";
 	}
 	@Override
 	public void HandlePacket(Packet230ModLoader packet) {

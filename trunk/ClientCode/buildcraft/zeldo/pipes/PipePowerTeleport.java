@@ -47,6 +47,14 @@ public class PipePowerTeleport extends Pipe implements IPipeTransportPowerHook {
 		super(new PipeTransportPower(), new PipeLogicPowerTeleport(), itemID);
 
 	}
+	
+	public void updateEntity()
+    {
+    	if (!PowerTeleportPipes.contains(this)) {
+    		PowerTeleportPipes.add(this);
+    	}
+    }
+	
 	@Override
 	public int getBlockTexture() {
 		MutiPlayerProxy.bindTex();

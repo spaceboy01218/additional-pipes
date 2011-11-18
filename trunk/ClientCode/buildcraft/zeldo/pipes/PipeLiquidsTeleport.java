@@ -49,6 +49,12 @@ public class PipeLiquidsTeleport extends Pipe implements IPipeTransportLiquidsHo
 		super(new PipeTransportLiquids(), new PipeLogicLiquidTeleport(), itemID);
 	}
 
+	public void updateEntity()
+    {
+    	if (!LiquidTeleportPipes.contains(this)) {
+    		LiquidTeleportPipes.add(this);
+    	}
+    }
 	@Override
 	public int getBlockTexture() {
 		MutiPlayerProxy.bindTex();
