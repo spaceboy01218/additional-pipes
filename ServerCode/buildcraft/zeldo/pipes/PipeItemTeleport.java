@@ -110,6 +110,10 @@ public class PipeItemTeleport extends Pipe implements IPipeTransportItemsHook {
 
 	@Override
 	public void updateEntity() {
+		if (!ItemTeleportPipes.contains(this)) {
+    		ItemTeleportPipes.add(this);
+    	}
+		
 		for (int theID : idsToRemove) {
 			((PipeTransportItems)transport).travelingEntities.remove(theID);
 		}

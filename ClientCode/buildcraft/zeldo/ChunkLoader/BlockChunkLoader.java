@@ -13,9 +13,9 @@ import net.minecraft.src.buildcraft.zeldo.MutiPlayerProxy;
 public class BlockChunkLoader extends BlockContainer
 {
 
-	public BlockChunkLoader()
+	public BlockChunkLoader(int BlockID)
 	{
-		super(254, 12 * 16 + 1, Material.cloth);
+		super(BlockID, 12 * 16 + 1, Material.cloth);
 	}
 
 	@Override
