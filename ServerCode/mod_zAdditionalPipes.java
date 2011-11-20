@@ -243,7 +243,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 		
 
-
+		config.save();
 		//BuildCraftCore.customBuildCraftTexture = mod_AdditionalPipes.BUILDCRAFT_OVERRIDE_TEXTURE;
 		//MinecraftForgeClient.preloadTexture(BuildCraftCore.customBuildCraftTexture);
 		//ModLoader.addOverride(BuildCraftCore.customBuildCraftTexture, "/net/minecraft/src/zeldo/gui/pipe.png");
@@ -261,14 +261,16 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		//ChunkLoader
 		ModLoader.RegisterTileEntity(net.minecraft.src.buildcraft.zeldo.ChunkLoader.TileChunkLoader.class, "ChunkLoader");
 		int ChunkLoaderID = Integer.parseInt(config.getOrCreateIntProperty("ChunkLoader.id",Configuration.BLOCK_PROPERTY, DEFUALT_CHUNK_LOADER_ID).value);
+		config.save();
 		blockChunkLoader = new BlockChunkLoader(ChunkLoaderID);
 		ModLoader.RegisterBlock(blockChunkLoader);
 		boolean Craftable = Boolean.parseBoolean(config.getOrCreateBooleanProperty("ChunkLoader.Enabled",Configuration.BLOCK_PROPERTY, true).value);
+		config.save();
 		if (Craftable)
 			CraftingManager.getInstance().addShapelessRecipe(new ItemStack(blockChunkLoader, 1), new Object[] {Item.ingotIron,Item.ingotIron,Item.ingotIron,Item.ingotIron});
 		//Finish ChunkLoader
 
-		config.save();
+		
 		if (allowWPRemove)
 		{
 			CraftingManager craftingmanager = CraftingManager.getInstance();
@@ -304,7 +306,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "Rev30";
+		return "Rev31";
 	}
 
 	public void HandlePacket(Packet230ModLoader packet, EntityPlayerMP player) {
