@@ -330,7 +330,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		AddImageOverride();
 		MinecraftForgeClient.preloadTexture(mod_zAdditionalPipes.MASTER_TEXTURE_FILE);
 		MinecraftForgeClient.preloadTexture(mod_zAdditionalPipes.MASTER_OVERRIDE_FILE);
-
+		config.save();
 		pipeItemTeleport = createPipe (mod_zAdditionalPipes.DEFUALT_ITEM_TELEPORT_ID, PipeItemTeleport.class, "Item Teleport Pipe", BuildCraftCore.diamondGearItem, Block.glass, BuildCraftCore.diamondGearItem, null);
 		pipeLiquidTeleport = createPipe (mod_zAdditionalPipes.DEFUALT_LIQUID_TELEPORT_ID, PipeLiquidsTeleport.class, "Waterproof Teleport Pipe", BuildCraftTransport.pipeWaterproof, pipeItemTeleport, null, null);
 		pipePowerTeleport = createPipe (mod_zAdditionalPipes.DEFUALT_POWER_TELEPORT_ID, PipePowerTeleport.class, "Power Teleport Pipe", Item.redstone, pipeItemTeleport, null, null);
@@ -354,11 +354,13 @@ public class mod_zAdditionalPipes extends BaseModMp {
 		//ChunkLoader
 		ModLoader.RegisterTileEntity(net.minecraft.src.buildcraft.zeldo.ChunkLoader.TileChunkLoader.class, "ChunkLoader");
 		int ChunkLoaderID = Integer.parseInt(config.getOrCreateIntProperty("ChunkLoader.id",Configuration.BLOCK_PROPERTY, DEFUALT_CHUNK_LOADER_ID).value);
+		config.save();
 		blockChunkLoader = new BlockChunkLoader(ChunkLoaderID);
 		ModLoader.RegisterBlock(blockChunkLoader);
 		blockChunkLoader.setBlockName("ChunkLoading Block");
 		ModLoader.AddName(blockChunkLoader, "ChunkLoading Block");
 		boolean Craftable = Boolean.parseBoolean(config.getOrCreateBooleanProperty("ChunkLoader.Enabled",Configuration.BLOCK_PROPERTY, true).value);
+		config.save();
 		if (Craftable)
 			CraftingManager.getInstance().addShapelessRecipe(new ItemStack(blockChunkLoader, 1), new Object[] {Item.ingotIron,Item.ingotIron,Item.ingotIron,Item.ingotIron});
 		//Finish ChunkLoader
@@ -481,7 +483,7 @@ public class mod_zAdditionalPipes extends BaseModMp {
 
 	@Override
 	public String Version() {
-		return "Rev30";
+		return "Rev31";
 	}
 	@Override
 	public void HandlePacket(Packet230ModLoader packet) {
